@@ -9,38 +9,175 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RegistrarRouteImport } from './routes/registrar'
+import { Route as RankingRouteImport } from './routes/ranking'
+import { Route as PerfilRouteImport } from './routes/perfil'
+import { Route as FestasRouteImport } from './routes/festas'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AmigosRouteImport } from './routes/amigos'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as FestaCodeRouteImport } from './routes/festa.$code'
 
+const RegistrarRoute = RegistrarRouteImport.update({
+  id: '/registrar',
+  path: '/registrar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RankingRoute = RankingRouteImport.update({
+  id: '/ranking',
+  path: '/ranking',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PerfilRoute = PerfilRouteImport.update({
+  id: '/perfil',
+  path: '/perfil',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FestasRoute = FestasRouteImport.update({
+  id: '/festas',
+  path: '/festas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AmigosRoute = AmigosRouteImport.update({
+  id: '/amigos',
+  path: '/amigos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FestaCodeRoute = FestaCodeRouteImport.update({
+  id: '/festa/$code',
+  path: '/festa/$code',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/amigos': typeof AmigosRoute
+  '/auth': typeof AuthRoute
+  '/festas': typeof FestasRoute
+  '/perfil': typeof PerfilRoute
+  '/ranking': typeof RankingRoute
+  '/registrar': typeof RegistrarRoute
+  '/festa/$code': typeof FestaCodeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/amigos': typeof AmigosRoute
+  '/auth': typeof AuthRoute
+  '/festas': typeof FestasRoute
+  '/perfil': typeof PerfilRoute
+  '/ranking': typeof RankingRoute
+  '/registrar': typeof RegistrarRoute
+  '/festa/$code': typeof FestaCodeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/amigos': typeof AmigosRoute
+  '/auth': typeof AuthRoute
+  '/festas': typeof FestasRoute
+  '/perfil': typeof PerfilRoute
+  '/ranking': typeof RankingRoute
+  '/registrar': typeof RegistrarRoute
+  '/festa/$code': typeof FestaCodeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/amigos'
+    | '/auth'
+    | '/festas'
+    | '/perfil'
+    | '/ranking'
+    | '/registrar'
+    | '/festa/$code'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/amigos'
+    | '/auth'
+    | '/festas'
+    | '/perfil'
+    | '/ranking'
+    | '/registrar'
+    | '/festa/$code'
+  id:
+    | '__root__'
+    | '/'
+    | '/amigos'
+    | '/auth'
+    | '/festas'
+    | '/perfil'
+    | '/ranking'
+    | '/registrar'
+    | '/festa/$code'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AmigosRoute: typeof AmigosRoute
+  AuthRoute: typeof AuthRoute
+  FestasRoute: typeof FestasRoute
+  PerfilRoute: typeof PerfilRoute
+  RankingRoute: typeof RankingRoute
+  RegistrarRoute: typeof RegistrarRoute
+  FestaCodeRoute: typeof FestaCodeRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/registrar': {
+      id: '/registrar'
+      path: '/registrar'
+      fullPath: '/registrar'
+      preLoaderRoute: typeof RegistrarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ranking': {
+      id: '/ranking'
+      path: '/ranking'
+      fullPath: '/ranking'
+      preLoaderRoute: typeof RankingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/perfil': {
+      id: '/perfil'
+      path: '/perfil'
+      fullPath: '/perfil'
+      preLoaderRoute: typeof PerfilRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/festas': {
+      id: '/festas'
+      path: '/festas'
+      fullPath: '/festas'
+      preLoaderRoute: typeof FestasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/amigos': {
+      id: '/amigos'
+      path: '/amigos'
+      fullPath: '/amigos'
+      preLoaderRoute: typeof AmigosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +185,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/festa/$code': {
+      id: '/festa/$code'
+      path: '/festa/$code'
+      fullPath: '/festa/$code'
+      preLoaderRoute: typeof FestaCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AmigosRoute: AmigosRoute,
+  AuthRoute: AuthRoute,
+  FestasRoute: FestasRoute,
+  PerfilRoute: PerfilRoute,
+  RankingRoute: RankingRoute,
+  RegistrarRoute: RegistrarRoute,
+  FestaCodeRoute: FestaCodeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

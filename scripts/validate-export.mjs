@@ -2,11 +2,10 @@ import { mkdir } from "node:fs/promises";
 import { chromium } from "playwright";
 
 const baseUrl = process.env.BASE_URL || "http://localhost:8080";
-const browser = await chromium.launch();
+const browser = await chromium.launch({ args: ["--no-sandbox"] });
 const page = await browser.newPage({
   viewport: { width: 390, height: 844 },
   acceptDownloads: true,
-  ignoreHTTPSErrors: true,
 });
 await page.goto(`${baseUrl}/perfil`, { waitUntil: "networkidle" });
 await page

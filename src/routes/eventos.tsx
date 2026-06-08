@@ -42,11 +42,12 @@ export default function EventosPage() {
           <SectionHeader eyebrow="Destaques" title="Destaques da pista" />
           <div className="grid gap-4 sm:grid-cols-2">
             {users.slice(0, 2).map((u, i) => (
-              <article
-                key={u.id}
-                className="card-3d hover-lift p-4 sm:p-5"
-              >
-                <img src={u.avatar} alt={u.name} className="h-20 w-20 rounded-3xl object-cover sm:h-24 sm:w-24" />
+              <article key={u.id} className="card-3d hover-lift p-4 sm:p-5">
+                <img
+                  src={u.avatar}
+                  alt={u.name}
+                  className="h-20 w-20 rounded-3xl object-cover sm:h-24 sm:w-24"
+                />
                 <h3 className="mt-4 text-xl font-black sm:text-2xl">
                   {i === 0 ? "Destaque da pista" : "Subindo no evento"}
                 </h3>
@@ -84,7 +85,6 @@ export default function EventosPage() {
 function EventStatusCard({ event }: { event: (typeof events)[number] }) {
   return (
     <article className="card-3d hover-lift overflow-hidden p-0">
-
       <div className={cn("relative min-h-40 bg-gradient-to-br p-5 text-white", event.gradient)}>
         <span className="absolute right-4 top-4 rounded-full bg-white/20 px-3 py-1 text-xs font-black backdrop-blur">
           {event.status}

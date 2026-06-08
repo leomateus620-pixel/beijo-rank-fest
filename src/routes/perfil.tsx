@@ -120,10 +120,7 @@ function PerfilPage() {
                 { l: "BeijoChecks", v: user.kisses },
                 { l: "Confirmações", v: user.matches },
               ].map((s) => (
-                <div
-                  key={s.l}
-                  className="rounded-2xl border border-red-100 bg-white p-3 shadow-sm"
-                >
+                <div key={s.l} className="rounded-2xl border border-red-100 bg-white p-3 shadow-sm">
                   <div className="text-2xl font-black text-red-600">{s.v}</div>
                   <div className="text-[10px] font-black uppercase tracking-wide text-muted-foreground">
                     {s.l}
@@ -162,7 +159,10 @@ function PerfilPage() {
                   tickLine={false}
                   axisLine={false}
                 />
-                <Tooltip content={<ChartTooltip />} cursor={{ stroke: "#e11d48", strokeOpacity: 0.25 }} />
+                <Tooltip
+                  content={<ChartTooltip />}
+                  cursor={{ stroke: "#e11d48", strokeOpacity: 0.25 }}
+                />
                 <Area
                   type="monotone"
                   dataKey="beijos"
@@ -197,10 +197,7 @@ function PerfilPage() {
               { label: "Evento em alta", icon: Medal },
               { label: "Top social", icon: Trophy },
             ].map((b) => (
-              <article
-                key={b.label}
-                className="card-3d hover-lift relative overflow-hidden p-4"
-              >
+              <article key={b.label} className="card-3d hover-lift relative overflow-hidden p-4">
                 <div className="absolute -right-6 -top-6 h-20 w-20 rounded-full bg-orange-200/40 blur-2xl" />
                 <div className="relative flex items-center gap-3">
                   <div className="grid h-10 w-10 place-items-center rounded-2xl bg-gradient-lipstick text-white shadow-md">
@@ -245,9 +242,7 @@ function ChartTooltip({
     <div className="rounded-2xl border border-red-100 bg-white/95 p-3 shadow-xl backdrop-blur">
       <div className="text-[10px] font-black uppercase tracking-wide text-red-500">{label}</div>
       <div className="mt-1 text-xl font-black text-red-600">{p.value} BeijoChecks</div>
-      <div className="text-xs font-bold text-muted-foreground">
-        Cidade: {p.payload.cidade}
-      </div>
+      <div className="text-xs font-bold text-muted-foreground">Cidade: {p.payload.cidade}</div>
     </div>
   );
 }

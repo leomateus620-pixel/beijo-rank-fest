@@ -7,9 +7,8 @@ import {
 } from "@/components/beijocheck/social";
 import { cityComparison, events, regions, users } from "@/data/beijocheck.mock";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Share2 } from "lucide-react";
+import { ShareProfileRankingActions } from "@/components/beijocheck/share";
 
 export const Route = createFileRoute("/ranking")({
   head: () => ({ meta: [{ title: "Ranking — BeijoCheck" }] }),
@@ -20,15 +19,15 @@ function RankingPage() {
   const tabs = ["Geral", "Cidade", "Evento", "Região"];
   return (
     <AppShell>
-      <section className="rounded-[2.1rem] bg-gradient-to-br from-red-600 via-rose-600 to-orange-400 p-6 text-white shadow-[0_28px_90px_rgba(225,29,72,.3)] sm:p-8">
+      <section className="min-w-0 rounded-[2.1rem] bg-gradient-to-br from-red-600 via-rose-600 to-orange-400 p-6 text-white shadow-[0_28px_90px_rgba(225,29,72,.3)] sm:p-8">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-          <div className="flex items-center gap-3">
+          <div className="flex min-w-0 items-center gap-3">
             <Icons.Trophy className="h-10 w-10" />
             <div>
               <p className="text-sm font-black uppercase tracking-[.24em] text-white/75">
                 Ranking validado
               </p>
-              <h1 className="text-4xl font-black sm:text-6xl">
+              <h1 className="text-balance break-words text-[clamp(2.15rem,9vw,3.75rem)] font-black leading-tight">
                 Competição pronta para compartilhar
               </h1>
               <p className="mt-2 max-w-2xl text-white/80">
@@ -37,25 +36,23 @@ function RankingPage() {
               </p>
             </div>
           </div>
-          <Button className="rounded-full bg-white font-black text-red-600 hover:bg-white/90">
-            <Share2 className="mr-2 h-4 w-4" /> Compartilhar ranking
-          </Button>
+          <ShareProfileRankingActions user={users[0]} compact className="bg-white/20 text-white" />
         </div>
       </section>
 
-      <section className="mt-6 grid gap-5 lg:grid-cols-[1fr_330px]">
+      <section className="mt-6 grid min-w-0 gap-5 lg:grid-cols-[minmax(0,1fr)_330px]">
         <MyRankingPositionCard />
         <ShareRankingCard />
       </section>
 
       <Tabs defaultValue="Geral" className="mt-8">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-          <TabsList className="flex h-auto justify-start gap-2 overflow-x-auto rounded-[1.5rem] bg-white/70 p-2 backdrop-blur-xl">
+          <TabsList className="scrollbar-hide flex h-auto max-w-full justify-start gap-2 overflow-x-auto rounded-[1.5rem] bg-white/70 p-2 backdrop-blur-xl">
             {tabs.map((tab) => (
               <TabsTrigger
                 key={tab}
                 value={tab}
-                className="rounded-full px-5 py-3 font-black data-[state=active]:bg-gradient-lipstick data-[state=active]:text-white"
+                className="shrink-0 rounded-full px-5 py-3 font-black data-[state=active]:bg-gradient-lipstick data-[state=active]:text-white"
               >
                 {tab}
               </TabsTrigger>
@@ -124,7 +121,7 @@ function RankingTab({ tab }: { tab: string }) {
         </div>
       )}
       <SectionHeader eyebrow="Lista competitiva" title="Classificação completa" />
-      <div className="mt-4 overflow-hidden rounded-[1.8rem] border border-white/70 bg-white/80 shadow-[0_18px_50px_rgba(159,18,57,.08)]">
+      <div className="mt-4 max-w-full overflow-hidden rounded-[1.8rem] border border-white/70 bg-white/80 shadow-[0_18px_50px_rgba(159,18,57,.08)]">
         <div className="hidden grid-cols-[80px_1fr_120px_160px_160px] gap-4 border-b border-red-100 px-5 py-4 text-xs font-black uppercase tracking-wide text-muted-foreground md:grid">
           <span>Posição</span>
           <span>Nome</span>
@@ -148,13 +145,13 @@ function RankingTab({ tab }: { tab: string }) {
                 {r.badge}
               </span>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex min-w-0 items-center gap-3">
               {"avatar" in r && r.avatar && (
                 <img src={r.avatar} alt={r.name} className="h-11 w-11 rounded-2xl object-cover" />
               )}
-              <div>
-                <div className="font-black">{r.name}</div>
-                <div className="text-sm text-muted-foreground">{r.meta}</div>
+              <div className="min-w-0">
+                <div className="truncate font-black">{r.name}</div>
+                <div className="truncate text-sm text-muted-foreground">{r.meta}</div>
               </div>
             </div>
             <div className="font-black text-red-600">{r.points} pts</div>

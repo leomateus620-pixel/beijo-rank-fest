@@ -25,27 +25,27 @@ export const Route = createFileRoute("/")({
 function IndexPage() {
   return (
     <AppShell>
-      <section className="grid gap-5 xl:grid-cols-[1.15fr_.85fr] xl:items-stretch">
-        <div className="relative overflow-hidden rounded-[2.4rem] bg-gradient-to-br from-red-600 via-rose-600 to-orange-400 p-6 text-white shadow-[0_32px_100px_rgba(225,29,72,.35)] sm:p-8">
+      <section className="grid min-w-0 gap-5 xl:grid-cols-[1.15fr_.85fr] xl:items-stretch">
+        <div className="relative min-w-0 overflow-hidden rounded-[2rem] bg-gradient-to-br from-red-600 via-rose-600 to-orange-400 p-5 text-white shadow-[0_32px_100px_rgba(225,29,72,.35)] sm:p-8">
           <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-white/15 blur-3xl" />
           <div className="absolute bottom-0 right-8 hidden text-[10rem] opacity-10 sm:block">
             💋
           </div>
-          <div className="relative z-10 max-w-2xl">
+          <div className="relative z-10 max-w-2xl min-w-0">
             <div className="mb-5 flex flex-wrap gap-2">
               <MutualConfirmationBadge />
               <span className="rounded-full bg-white/15 px-3 py-1.5 text-xs font-black backdrop-blur">
                 {activeEvent.city} ao vivo
               </span>
             </div>
-            <h1 className="text-5xl font-black leading-[.9] sm:text-7xl">
+            <h1 className="text-fluid-hero text-balance break-words font-black leading-[.95] sm:leading-[.9]">
               Abra, explore e suba no ranking da noite
             </h1>
             <p className="mt-5 max-w-xl text-base font-semibold text-white/85 sm:text-lg">
               Descubra pessoas e eventos próximos, envie BeijoChecks com validação mútua e acompanhe
               sua posição por cidade, evento e região.
             </p>
-            <div className="mt-7 grid gap-3 sm:flex">
+            <div className="mt-7 grid min-w-0 gap-3 sm:flex sm:flex-wrap">
               <Button
                 asChild
                 className="h-13 rounded-full bg-white px-6 font-black text-red-600 hover:bg-white/90"
@@ -76,15 +76,17 @@ function IndexPage() {
         <EventLiveCard event={activeEvent} />
       </section>
 
-      <section className="mt-6 grid gap-5 lg:grid-cols-[.9fr_1.1fr]">
+      <section className="mt-6 grid min-w-0 gap-5 lg:grid-cols-[.9fr_1.1fr]">
         <MyRankingPositionCard />
-        <div className="rounded-[1.8rem] border border-white/70 bg-white/80 p-5 shadow-[0_18px_50px_rgba(159,18,57,.08)]">
+        <div className="min-w-0 rounded-[1.8rem] border border-white/70 bg-white/80 p-4 sm:p-5 shadow-[0_18px_50px_rgba(159,18,57,.08)]">
           <div className="mb-4 flex items-center justify-between gap-4">
             <div>
               <p className="text-xs font-black uppercase tracking-[.24em] text-red-500">
                 Perto de você
               </p>
-              <h2 className="text-3xl font-black">Destaques para explorar</h2>
+              <h2 className="text-balance text-[clamp(1.55rem,7vw,1.875rem)] font-black">
+                Destaques para explorar
+              </h2>
             </div>
             <Button
               asChild
@@ -94,12 +96,12 @@ function IndexPage() {
               <Link to="/explorar">Ver todos</Link>
             </Button>
           </div>
-          <div className="grid gap-3 sm:grid-cols-3">
+          <div className="grid min-w-0 gap-3 sm:grid-cols-3">
             {users.slice(0, 3).map((user) => (
               <Link
                 key={user.id}
                 to="/explorar"
-                className="group rounded-3xl bg-red-50 p-3 transition hover:-translate-y-1 hover:bg-red-100/70"
+                className="group min-w-0 rounded-3xl bg-red-50 p-3 transition hover:-translate-y-1 hover:bg-red-100/70"
               >
                 <img
                   src={user.avatar}
@@ -118,13 +120,13 @@ function IndexPage() {
         </div>
       </section>
 
-      <section className="mt-6 grid gap-4 sm:grid-cols-3">
+      <section className="mt-6 grid min-w-0 gap-4 sm:grid-cols-3">
         {metrics.map((metric) => (
           <MetricCard key={metric.label} metric={metric} />
         ))}
       </section>
 
-      <section className="mt-8 grid gap-5 xl:grid-cols-[1.1fr_.9fr]">
+      <section className="mt-8 grid min-w-0 gap-5 xl:grid-cols-[1.1fr_.9fr]">
         <div>
           <SectionHeader
             eyebrow="Evento ativo"
@@ -143,9 +145,9 @@ function IndexPage() {
         </div>
       </section>
 
-      <section className="mt-8 grid gap-5 lg:grid-cols-[.8fr_1.2fr]">
+      <section className="mt-8 grid min-w-0 gap-5 lg:grid-cols-[.8fr_1.2fr]">
         <SafetyTrustBar />
-        <div className="rounded-[1.8rem] border border-white/70 bg-white/80 p-5 shadow-[0_18px_50px_rgba(159,18,57,.08)]">
+        <div className="min-w-0 rounded-[1.8rem] border border-white/70 bg-white/80 p-4 sm:p-5 shadow-[0_18px_50px_rgba(159,18,57,.08)]">
           <p className="text-xs font-black uppercase tracking-[.24em] text-red-500">
             Como funciona
           </p>

@@ -3,7 +3,7 @@ import { Area, AreaChart, ResponsiveContainer, Tooltip } from "recharts";
 import { AppShell, EventCard, MatchButton, SectionHeader } from "@/components/beijocheck/brand";
 import { events, users, weeklyEvolution } from "@/data/beijocheck.mock";
 import { Button } from "@/components/ui/button";
-import { Share2 } from "lucide-react";
+import { ShareProfileRankingActions } from "@/components/beijocheck/share";
 
 export const Route = createFileRoute("/perfil")({
   head: () => ({ meta: [{ title: "Perfil — BeijoCheck" }] }),
@@ -14,7 +14,7 @@ function PerfilPage() {
   const user = users[0];
   return (
     <AppShell>
-      <section className="grid gap-5 lg:grid-cols-[.75fr_1.25fr]">
+      <section className="grid min-w-0 gap-5 lg:grid-cols-[.75fr_1.25fr]">
         <div className="overflow-hidden rounded-[2.1rem] border border-white/70 bg-white/80 shadow-[0_18px_50px_rgba(159,18,57,.09)]">
           <div className="h-36 bg-gradient-to-br from-red-600 via-rose-600 to-orange-400" />
           <div className="-mt-16 p-6 text-center">
@@ -23,7 +23,7 @@ function PerfilPage() {
               alt={user.name}
               className="mx-auto h-32 w-32 rounded-[2rem] border-4 border-white object-cover shadow-xl"
             />
-            <h1 className="mt-4 text-4xl font-black">
+            <h1 className="mt-4 break-words text-[clamp(2rem,9vw,2.5rem)] font-black leading-tight">
               {user.name}, {user.age}
             </h1>
             <p className="text-muted-foreground">@lara · {user.city}</p>
@@ -42,11 +42,8 @@ function PerfilPage() {
                 </div>
               ))}
             </div>
-            <div className="mt-5 flex gap-2">
-              <Button className="flex-1 rounded-full bg-gradient-lipstick font-black text-white">
-                <Share2 className="mr-1 h-4 w-4" />
-                BeijoCard
-              </Button>
+            <div className="mt-5 grid gap-2">
+              <ShareProfileRankingActions user={user} compact />
               <MatchButton />
             </div>
           </div>
@@ -77,7 +74,7 @@ function PerfilPage() {
           </div>
         </div>
       </section>
-      <section className="mt-8 grid gap-5 lg:grid-cols-2">
+      <section className="mt-8 grid min-w-0 gap-5 lg:grid-cols-2">
         <div>
           <SectionHeader eyebrow="Badges" title="Conquistas" />
           <div className="grid gap-3 sm:grid-cols-2">

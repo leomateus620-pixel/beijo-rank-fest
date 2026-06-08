@@ -88,6 +88,12 @@
   * {
     border-color: var(--color-border);
   }
+  html,
+  body,
+  #root {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
   body {
     background:
       radial-gradient(ellipse 80% 60% at 20% 0%, oklch(0.93 0.08 355 / 0.6), transparent),
@@ -96,6 +102,7 @@
     color: var(--color-foreground);
     font-family: var(--font-sans);
     min-height: 100vh;
+    overscroll-behavior-x: none;
   }
   h1,
   h2,
@@ -126,5 +133,24 @@
   }
   .animate-kiss {
     animation: kiss-pop 2.4s ease-in-out infinite;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .pb-safe-nav {
+    padding-bottom: calc(7.25rem + env(safe-area-inset-bottom));
+  }
+  .bottom-safe-nav {
+    bottom: calc(0.75rem + env(safe-area-inset-bottom));
+  }
+  .text-fluid-hero {
+    font-size: clamp(2.35rem, 12vw, 4.5rem);
+  }
+  .text-fluid-section {
+    font-size: clamp(1.65rem, 7vw, 3.75rem);
   }
 }

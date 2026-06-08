@@ -47,14 +47,14 @@ const navItems = [
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen pb-24 lg:pb-0">
-      <div className="fixed inset-0 -z-10 overflow-hidden">
+    <div className="min-h-screen max-w-full overflow-x-hidden pb-safe-nav lg:pb-0">
+      <div className="fixed inset-0 -z-10 max-w-full overflow-hidden">
         <div className="absolute -top-24 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-red-400/25 blur-3xl" />
-        <div className="absolute right-0 top-48 h-80 w-80 rounded-full bg-orange-300/25 blur-3xl" />
+        <div className="absolute right-[-5rem] top-48 h-80 w-80 rounded-full bg-orange-300/25 blur-3xl" />
         <div className="absolute bottom-0 left-0 h-72 w-72 rounded-full bg-rose-300/25 blur-3xl" />
       </div>
       <header className="sticky top-0 z-40 border-b border-white/50 bg-white/70 backdrop-blur-2xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
+        <div className="mx-auto flex max-w-7xl min-w-0 items-center justify-between gap-2 px-3 py-3 sm:px-4">
           <BeijoLogo />
           <nav className="hidden items-center gap-1 rounded-full border border-white/70 bg-white/65 p-1 shadow-sm lg:flex">
             {navItems.map(({ label, to, icon: Icon }) => (
@@ -87,7 +87,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         </div>
       </header>
-      <main className="mx-auto max-w-7xl px-4 py-6 sm:py-8">{children}</main>
+      <main className="mx-auto w-full max-w-7xl min-w-0 overflow-x-hidden px-3 py-5 sm:px-4 sm:py-8">
+        {children}
+      </main>
       <BottomNavigation />
     </div>
   );
@@ -95,16 +97,24 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
 export function BottomNavigation() {
   return (
-    <nav className="fixed inset-x-3 bottom-3 z-50 rounded-[1.7rem] border border-white/70 bg-white/85 p-2 shadow-[0_20px_60px_rgba(159,18,57,.22)] backdrop-blur-2xl lg:hidden">
-      <div className="grid grid-cols-5 gap-1">
+    <nav
+      aria-label="Navegação principal"
+      className="bottom-safe-nav fixed inset-x-2 z-50 mx-auto max-w-[min(34rem,calc(100vw-1rem))] overflow-hidden rounded-[2rem] border border-white/55 bg-white/62 p-1.5 shadow-[0_24px_80px_rgba(159,18,57,.28),inset_0_1px_0_rgba(255,255,255,.78)] backdrop-blur-[28px] supports-[backdrop-filter]:bg-white/48 lg:hidden"
+    >
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,.65),rgba(255,255,255,.12)_45%,rgba(251,146,60,.18))]" />
+      <div className="scrollbar-hide relative flex min-w-0 snap-x snap-mandatory gap-1 overflow-x-auto overscroll-x-contain scroll-smooth px-0.5">
         {navItems.map(({ label, to, icon: Icon }) => (
           <Link
             key={to}
             to={to}
-            className="flex flex-col items-center gap-1 rounded-2xl px-1 py-2 text-[10px] font-bold text-muted-foreground"
-            activeProps={{ className: "bg-gradient-lipstick text-white shadow-lg" }}
+            className="flex min-w-[4.15rem] shrink-0 snap-center flex-col items-center justify-center gap-1 rounded-[1.35rem] px-2 py-2 text-[10px] font-black text-red-950/58 transition-all duration-300 hover:bg-white/50 hover:text-red-600 active:scale-95"
+            activeProps={{
+              className:
+                "bg-gradient-to-br from-red-600 via-rose-600 to-orange-400 text-white shadow-[0_12px_34px_rgba(225,29,72,.34),inset_0_1px_0_rgba(255,255,255,.32)]",
+            }}
           >
-            <Icon className="h-5 w-5" /> {label}
+            <Icon className="h-5 w-5 shrink-0" />
+            <span className="max-w-full truncate leading-none">{label}</span>
           </Link>
         ))}
       </div>
@@ -114,12 +124,12 @@ export function BottomNavigation() {
 
 export function PeriodFilter() {
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="scrollbar-hide flex max-w-full gap-2 overflow-x-auto pb-1">
       {["Hoje", "Semana", "Mês"].map((p, i) => (
         <button
           key={p}
           className={cn(
-            "rounded-full px-4 py-2 text-sm font-black transition",
+            "shrink-0 rounded-full px-4 py-2 text-sm font-black transition",
             i === 1
               ? "bg-gradient-lipstick text-white shadow-lg shadow-red-500/20"
               : "bg-white/75 text-muted-foreground hover:bg-red-50",
@@ -134,12 +144,12 @@ export function PeriodFilter() {
 
 export function CitySelector() {
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="scrollbar-hide flex max-w-full gap-2 overflow-x-auto pb-1">
       {["Geral", "Cidade", "Evento", "Região"].map((p, i) => (
         <button
           key={p}
           className={cn(
-            "rounded-full border px-4 py-2 text-sm font-black transition",
+            "shrink-0 rounded-full border px-4 py-2 text-sm font-black transition",
             i === 0
               ? "border-red-200 bg-red-50 text-red-600"
               : "border-white/70 bg-white/65 text-muted-foreground hover:text-red-600",
@@ -227,7 +237,7 @@ export function RankingList({
         {items.map((u, i) => (
           <li
             key={u.id}
-            className="flex items-center gap-3 rounded-2xl bg-white/70 p-3 transition hover:bg-red-50/80"
+            className="flex min-w-0 items-center gap-3 rounded-2xl bg-white/70 p-3 transition hover:bg-red-50/80"
           >
             <span
               className={cn(
@@ -293,7 +303,7 @@ export function UserCard({
         </span>
       </div>
       <div className="space-y-4 p-4">
-        <div className="grid grid-cols-3 gap-2 text-center">
+        <div className="grid min-w-0 grid-cols-3 gap-2 text-center">
           <Stat label="BeijoChecks" value={user.kisses} />
           <Stat label="Pontos" value={user.points} />
           <Stat label="Match" value={user.matches} />

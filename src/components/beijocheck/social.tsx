@@ -21,6 +21,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { BeijoEvent, BeijoUser } from "@/data/beijocheck.mock";
+import { users } from "@/data/beijocheck.mock";
+import { ShareProfileRankingActions } from "@/components/beijocheck/share";
 
 export function MutualConfirmationBadge({ compact = false }: { compact?: boolean }) {
   return (
@@ -42,11 +44,11 @@ export function SafetyTrustBar({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "rounded-[1.5rem] border border-white/70 bg-white/80 p-3 shadow-[0_14px_40px_rgba(159,18,57,.08)] backdrop-blur-xl",
+        "max-w-full rounded-[1.5rem] border border-white/70 bg-white/80 p-3 shadow-[0_14px_40px_rgba(159,18,57,.08)] backdrop-blur-xl",
         className,
       )}
     >
-      <div className="flex gap-2 overflow-x-auto pb-1">
+      <div className="scrollbar-hide flex max-w-full gap-2 overflow-x-auto overscroll-x-contain pb-1">
         {items.map(({ icon: Icon, label }) => (
           <span
             key={label}
@@ -83,7 +85,7 @@ export function ProfilePhotoCarousel({ user }: { user: BeijoUser }) {
   }
 
   return (
-    <div className="relative h-full min-h-[460px] overflow-hidden rounded-[2rem] bg-red-100 sm:min-h-[560px]">
+    <div className="relative h-full min-h-[390px] overflow-hidden rounded-[1.6rem] bg-red-100 sm:min-h-[560px]">
       <div className="absolute left-4 right-4 top-4 z-20 flex gap-1.5">
         {user.photos.map((photo, i) => (
           <button
@@ -111,7 +113,7 @@ export function ProfilePhotoCarousel({ user }: { user: BeijoUser }) {
             key={photo}
             src={photo}
             alt={`${user.name} foto ${i + 1}`}
-            className="h-full min-w-full snap-center object-cover"
+            className="h-full min-w-full max-w-full snap-center object-cover"
           />
         ))}
       </div>
@@ -128,17 +130,17 @@ export function ProfilePhotoCarousel({ user }: { user: BeijoUser }) {
       >
         <ChevronRight className="h-5 w-5" />
       </button>
-      <div className="absolute bottom-0 left-0 right-0 z-10 p-5 text-white sm:p-6">
+      <div className="absolute bottom-0 left-0 right-0 z-10 p-4 text-white sm:p-6">
         <div className="mb-3 flex flex-wrap gap-2">
           <MutualConfirmationBadge compact />
           <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-3 py-1.5 text-xs font-black backdrop-blur">
             <MapPin className="h-4 w-4" /> Perto de mim · {user.distance}
           </span>
         </div>
-        <h2 className="text-4xl font-black sm:text-5xl">
+        <h2 className="break-words text-[clamp(2rem,10vw,3rem)] font-black leading-none sm:text-5xl">
           {user.name}, {user.age}
         </h2>
-        <p className="mt-1 font-semibold text-white/85">
+        <p className="mt-1 break-words text-sm font-semibold text-white/85 sm:text-base">
           {user.city} · {user.event} · {user.localHighlight}
         </p>
       </div>
@@ -165,19 +167,19 @@ export function SwipeProfileCard({
   }
 
   return (
-    <article className="relative mx-auto max-w-md rounded-[2.2rem] border border-white/70 bg-white/85 p-2 shadow-[0_30px_90px_rgba(159,18,57,.22)] backdrop-blur-xl transition duration-300 sm:max-w-lg">
+    <article className="relative mx-auto w-full max-w-[min(100%,28rem)] rounded-[1.85rem] border border-white/70 bg-white/85 p-2 shadow-[0_30px_90px_rgba(159,18,57,.22)] backdrop-blur-xl transition duration-300 sm:max-w-lg">
       {feedback && (
         <div className="absolute left-1/2 top-8 z-30 -translate-x-1/2 rounded-full bg-white px-5 py-2 text-sm font-black text-red-600 shadow-xl animate-in fade-in zoom-in">
           {feedback}
         </div>
       )}
       <ProfilePhotoCarousel user={user} />
-      <div className="space-y-4 p-4">
-        <div className="flex flex-wrap gap-2">
+      <div className="space-y-3 p-3 sm:space-y-4 sm:p-4">
+        <div className="scrollbar-hide flex max-w-full gap-2 overflow-x-auto pb-1">
           {user.interests.map((interest) => (
             <span
               key={interest}
-              className="rounded-full bg-red-50 px-3 py-1 text-xs font-black text-red-600"
+              className="shrink-0 rounded-full bg-red-50 px-3 py-1 text-xs font-black text-red-600"
             >
               {interest}
             </span>
@@ -196,7 +198,7 @@ export function SwipeProfileCard({
         >
           Ver mais detalhes
         </Button>
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
           <ActionButton label="Pular" icon={X} onClick={() => act("skip", "Perfil pulado")} />
           <ActionButton
             label="Curtir"
@@ -235,7 +237,7 @@ function ActionButton({
     <button
       onClick={onClick}
       className={cn(
-        "flex flex-col items-center gap-1 rounded-2xl border p-3 text-[11px] font-black transition active:scale-95",
+        "flex min-w-0 flex-col items-center gap-1 rounded-2xl border px-1.5 py-2.5 text-[10px] sm:p-3 sm:text-[11px] font-black transition active:scale-95",
         primary
           ? "border-red-500 bg-gradient-lipstick text-white shadow-lg shadow-red-500/20"
           : "border-red-100 bg-white text-red-600 hover:bg-red-50",
@@ -248,7 +250,7 @@ function ActionButton({
 
 function MiniStat({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="rounded-2xl bg-red-50/75 p-3">
+    <div className="min-w-0 rounded-2xl bg-red-50/75 p-2 sm:p-3">
       <div className="truncate text-lg font-black text-red-600">{value}</div>
       <div className="text-[10px] font-black uppercase tracking-wide text-muted-foreground">
         {label}
@@ -259,14 +261,16 @@ function MiniStat({ label, value }: { label: string; value: string | number }) {
 
 export function EventLiveCard({ event }: { event: BeijoEvent }) {
   return (
-    <article className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-red-600 via-rose-600 to-orange-400 p-5 text-white shadow-[0_28px_90px_rgba(225,29,72,.3)] sm:p-6">
+    <article className="relative min-w-0 overflow-hidden rounded-[2rem] bg-gradient-to-br from-red-600 via-rose-600 to-orange-400 p-5 text-white shadow-[0_28px_90px_rgba(225,29,72,.3)] sm:p-6">
       <div className="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-white/15 blur-2xl" />
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-xs font-black uppercase tracking-[.24em] text-white/70">
             Evento em alta agora
           </p>
-          <h2 className="mt-2 text-4xl font-black">{event.name}</h2>
+          <h2 className="mt-2 break-words text-[clamp(2rem,8vw,2.5rem)] font-black leading-tight">
+            {event.name}
+          </h2>
           <p className="mt-2 font-semibold text-white/85">
             {event.venue} · {event.city} · {event.date}
           </p>
@@ -373,9 +377,7 @@ export function MyRankingPositionCard() {
         </div>
         <Trophy className="h-12 w-12 text-orange-500" />
       </div>
-      <Button className="mt-4 w-full rounded-full bg-gradient-lipstick font-black text-white">
-        <Share2 className="mr-2 h-4 w-4" /> Compartilhar posição
-      </Button>
+      <ShareProfileRankingActions user={users[0]} position={18} compact className="mt-4" />
     </article>
   );
 }
@@ -390,9 +392,7 @@ export function ShareRankingCard() {
           Ranking validado, badges e variação de posição em um card compartilhável.
         </p>
       </div>
-      <Button className="mt-4 w-full rounded-full bg-gradient-lipstick font-black text-white">
-        <Share2 className="mr-2 h-4 w-4" /> Compartilhar ranking
-      </Button>
+      <ShareProfileRankingActions user={users[0]} className="mt-4" />
     </article>
   );
 }

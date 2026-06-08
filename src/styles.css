@@ -199,4 +199,21 @@
     0 1px 0 oklch(1 0 0 / 0.55) inset,
     0 14px 40px -18px oklch(0.45 0.18 5 / 0.25);
 }
+@utility glass-login {
+  background: color-mix(in oklab, white 58%, transparent);
+  border: 1px solid color-mix(in oklab, white 70%, transparent);
+  backdrop-filter: blur(28px) saturate(160%);
+  box-shadow:
+    0 1px 0 oklch(1 0 0 / 0.7) inset,
+    0 24px 60px -22px oklch(0.45 0.18 5 / 0.28),
+    0 4px 14px -6px oklch(0.65 0.18 28 / 0.18);
+}
+@utility bg-login {
+  background:
+    radial-gradient(60% 50% at 18% 12%, oklch(0.96 0.04 18 / 0.7), transparent 60%),
+    radial-gradient(55% 45% at 90% 18%, oklch(0.96 0.05 60 / 0.55), transparent 60%),
+    radial-gradient(70% 55% at 80% 95%, oklch(0.97 0.03 18 / 0.6), transparent 65%),
+    linear-gradient(180deg, #ffffff, #fffafa 50%, #fff5ef);
+}
+
 

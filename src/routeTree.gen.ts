@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as RegistrarRouteImport } from './routes/registrar'
 import { Route as RankingRouteImport } from './routes/ranking'
 import { Route as PerfilRouteImport } from './routes/perfil'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as FestasRouteImport } from './routes/festas'
 import { Route as ExplorarRouteImport } from './routes/explorar'
 import { Route as EventosRouteImport } from './routes/eventos'
@@ -33,6 +34,11 @@ const RankingRoute = RankingRouteImport.update({
 const PerfilRoute = PerfilRouteImport.update({
   id: '/perfil',
   path: '/perfil',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FestasRoute = FestasRouteImport.update({
@@ -78,6 +84,7 @@ export interface FileRoutesByFullPath {
   '/eventos': typeof EventosRoute
   '/explorar': typeof ExplorarRoute
   '/festas': typeof FestasRoute
+  '/login': typeof LoginRoute
   '/perfil': typeof PerfilRoute
   '/ranking': typeof RankingRoute
   '/registrar': typeof RegistrarRoute
@@ -90,6 +97,7 @@ export interface FileRoutesByTo {
   '/eventos': typeof EventosRoute
   '/explorar': typeof ExplorarRoute
   '/festas': typeof FestasRoute
+  '/login': typeof LoginRoute
   '/perfil': typeof PerfilRoute
   '/ranking': typeof RankingRoute
   '/registrar': typeof RegistrarRoute
@@ -103,6 +111,7 @@ export interface FileRoutesById {
   '/eventos': typeof EventosRoute
   '/explorar': typeof ExplorarRoute
   '/festas': typeof FestasRoute
+  '/login': typeof LoginRoute
   '/perfil': typeof PerfilRoute
   '/ranking': typeof RankingRoute
   '/registrar': typeof RegistrarRoute
@@ -117,6 +126,7 @@ export interface FileRouteTypes {
     | '/eventos'
     | '/explorar'
     | '/festas'
+    | '/login'
     | '/perfil'
     | '/ranking'
     | '/registrar'
@@ -129,6 +139,7 @@ export interface FileRouteTypes {
     | '/eventos'
     | '/explorar'
     | '/festas'
+    | '/login'
     | '/perfil'
     | '/ranking'
     | '/registrar'
@@ -141,6 +152,7 @@ export interface FileRouteTypes {
     | '/eventos'
     | '/explorar'
     | '/festas'
+    | '/login'
     | '/perfil'
     | '/ranking'
     | '/registrar'
@@ -154,6 +166,7 @@ export interface RootRouteChildren {
   EventosRoute: typeof EventosRoute
   ExplorarRoute: typeof ExplorarRoute
   FestasRoute: typeof FestasRoute
+  LoginRoute: typeof LoginRoute
   PerfilRoute: typeof PerfilRoute
   RankingRoute: typeof RankingRoute
   RegistrarRoute: typeof RegistrarRoute
@@ -181,6 +194,13 @@ declare module '@tanstack/react-router' {
       path: '/perfil'
       fullPath: '/perfil'
       preLoaderRoute: typeof PerfilRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/festas': {
@@ -242,6 +262,7 @@ const rootRouteChildren: RootRouteChildren = {
   EventosRoute: EventosRoute,
   ExplorarRoute: ExplorarRoute,
   FestasRoute: FestasRoute,
+  LoginRoute: LoginRoute,
   PerfilRoute: PerfilRoute,
   RankingRoute: RankingRoute,
   RegistrarRoute: RegistrarRoute,

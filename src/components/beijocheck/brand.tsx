@@ -89,13 +89,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <button className="grid h-10 w-10 place-items-center rounded-full border border-white/70 bg-white/70 text-red-600 shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg">
               <Filter className="h-4 w-4" />
             </button>
-            <div className="hidden items-center gap-2 rounded-full border border-white/80 bg-white/70 py-1 pl-1 pr-3 shadow-sm sm:flex">
-              <img src={users[0].avatar} alt="Lara" className="h-9 w-9 rounded-full object-cover" />
-              <div className="text-xs">
-                <div className="font-black">Lara</div>
-                <div className="text-muted-foreground">#1 Santa Rosa</div>
-              </div>
-            </div>
+            <UserMenu />
+
           </div>
         </div>
       </header>

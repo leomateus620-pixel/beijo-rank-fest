@@ -1,119 +1,122 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Radio, ShieldCheck, Trophy, Users } from "lucide-react";
-import { AppShell } from "@/components/beijocheck/brand";
+import { AppShell, EventCard, RankingList, SectionHeader } from "@/components/beijocheck/brand";
+import { EventLiveCard } from "@/components/beijocheck/social";
 import { activeEvent, events, users } from "@/data/beijocheck.mock";
+import { Button } from "@/components/ui/button";
+import { CalendarDays, MapPin, Radio, Trophy, Users } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/eventos")({
   head: () => ({ meta: [{ title: "Eventos — BeijoCheck" }] }),
   component: EventosPage,
 });
 
-function EventosPage() {
+export default function EventosPage() {
   return (
     <AppShell>
-      <section className="text-white">
-        <header className="pt-2">
-          <p className="text-xs font-black uppercase tracking-[.22em] text-red-300">motor social</p>
-          <h1 className="text-fluid-title mt-1">Eventos</h1>
-          <p className="mt-2 max-w-sm text-sm font-semibold text-white/62">
-            Entre no evento, veja quem está presente e acompanhe o ranking ao vivo.
+      <section className="grid gap-5 lg:grid-cols-[1.1fr_.9fr]">
+        <EventLiveCard event={activeEvent} />
+        <div className="rounded-[2rem] border border-white/70 bg-white/80 p-5 shadow-[0_18px_50px_rgba(159,18,57,.08)]">
+          <p className="text-xs font-black uppercase tracking-[.24em] text-red-500">
+            Viralização local
           </p>
-        </header>
-
-        <section className="relative mt-5 overflow-hidden rounded-[2.1rem] bg-zinc-900 p-5 card-shadow-premium">
-          <img
-            src={activeEvent.image}
-            alt=""
-            className="absolute inset-0 h-full w-full object-cover opacity-72"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/58 to-black/8" />
-          <div className="relative z-10 min-h-[22rem] content-end">
-            <span className="inline-flex items-center gap-2 rounded-full bg-red-500/24 px-3 py-1.5 text-[11px] font-black uppercase text-white backdrop-blur">
-              <Radio className="h-3.5 w-3.5" /> Ao vivo agora
-            </span>
-            <h2 className="mt-3 max-w-xs text-5xl font-black leading-[.88] tracking-[-.06em]">
-              {activeEvent.name}
-            </h2>
-            <p className="mt-3 text-sm font-bold text-white/72">
-              {activeEvent.venue} · {activeEvent.city} · {activeEvent.date}
-            </p>
-            <div className="mt-4 grid grid-cols-3 gap-2">
-              <EventMetric icon={Users} label="ativos" value={activeEvent.activeUsers} />
-              <EventMetric icon={Trophy} label="ranking" value={activeEvent.ranking} />
-              <EventMetric icon={ShieldCheck} label="mútuos" value={`${activeEvent.kisses}`} />
-            </div>
-            <div className="mt-4 grid grid-cols-2 gap-2">
-              <Link
-                to="/explorar"
-                className="rounded-full bg-white px-4 py-3 text-center text-sm font-black text-red-600"
-              >
-                Entrar no evento
-              </Link>
-              <Link
-                to="/ranking"
-                className="rounded-full border border-white/18 bg-white/10 px-4 py-3 text-center text-sm font-black backdrop-blur"
-              >
-                Ver ranking ao vivo
-              </Link>
-            </div>
+          <h1 className="mt-2 text-4xl font-black">Eventos movimentam o ranking</h1>
+          <p className="mt-3 text-muted-foreground">
+            Entre no evento, explore perfis presentes e acompanhe o ranking ao vivo com BeijoChecks
+            confirmados por consentimento mútuo.
+          </p>
+          <div className="mt-5 grid grid-cols-2 gap-3">
+            <Info icon={Users} label="Participantes" value={activeEvent.participants} />
+            <Info icon={Trophy} label="Ranking" value={activeEvent.ranking} />
+            <Info icon={MapPin} label="Cidade" value={activeEvent.city} />
+            <Info icon={Radio} label="Status" value="Ao vivo" />
           </div>
-        </section>
+        </div>
+      </section>
 
-        <section className="mt-5 rounded-[1.8rem] border border-white/10 bg-white/8 p-4 backdrop-blur">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <p className="text-[11px] font-black uppercase tracking-[.2em] text-red-300">
-                Ranking do evento
-              </p>
-              <h2 className="text-2xl font-black tracking-[-.04em]">Top da pista</h2>
-            </div>
-            <Link to="/ranking" className="text-sm font-black text-white/62">
-              Ver tudo ›
-            </Link>
-          </div>
-          <ol className="mt-4 grid gap-2">
-            {users.slice(0, 3).map((user, index) => (
-              <li key={user.id} className="flex items-center gap-3 rounded-3xl bg-black/22 p-2.5">
-                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-2xl beijo-gradient text-sm font-black">
-                  #{index + 1}
-                </span>
-                <img
-                  src={user.avatar}
-                  alt={user.name}
-                  className="h-11 w-11 rounded-2xl object-cover"
-                />
-                <div className="min-w-0 flex-1">
-                  <p className="truncate font-black">
-                    {user.name}, {user.age}
-                  </p>
-                  <p className="truncate text-xs font-bold text-white/48">
-                    {user.kisses} BeijoChecks · {user.localHighlight}
-                  </p>
-                </div>
-              </li>
+      <section className="mt-8 grid gap-5 lg:grid-cols-[.9fr_1.1fr]">
+        <RankingList title="Ranking do evento" items={users.slice(0, 5)} />
+        <div>
+          <SectionHeader eyebrow="Destaques" title="Quem está movimentando a pista" />
+          <div className="grid gap-4 sm:grid-cols-2">
+            {users.slice(0, 2).map((u, i) => (
+              <div
+                key={u.id}
+                className="rounded-[1.8rem] border border-white/70 bg-white/80 p-5 shadow-[0_18px_50px_rgba(159,18,57,.08)]"
+              >
+                <img src={u.avatar} alt={u.name} className="h-24 w-24 rounded-3xl object-cover" />
+                <h3 className="mt-4 text-2xl font-black">
+                  {i === 0 ? "Destaque da pista" : "Rising do evento"}
+                </h3>
+                <p className="text-muted-foreground">
+                  {u.name} · {u.kisses} BeijoChecks · {u.badge}
+                </p>
+                <Button
+                  asChild
+                  className="mt-4 rounded-full bg-gradient-lipstick font-black text-white"
+                >
+                  <Link to="/explorar">Explorar perfil</Link>
+                </Button>
+              </div>
             ))}
-          </ol>
-        </section>
-
-        <section className="mt-6 grid gap-4 pb-3">
-          <div className="flex items-end justify-between gap-3">
-            <div>
-              <p className="text-[11px] font-black uppercase tracking-[.2em] text-red-300">
-                agenda
-              </p>
-              <h2 className="text-3xl font-black tracking-[-.05em]">Próximas entradas sociais</h2>
-            </div>
           </div>
+        </div>
+      </section>
+
+      <section className="mt-10">
+        <SectionHeader
+          eyebrow="Agenda"
+          title="Eventos em alta, próximos e encerrados"
+          action="Criar alerta"
+        />
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {events.map((event) => (
-            <EventDiscoveryCard key={event.id} event={event} />
+            <EventStatusCard key={event.id} event={event} />
           ))}
-        </section>
+        </div>
       </section>
     </AppShell>
   );
 }
 
-function EventMetric({
+function EventStatusCard({ event }: { event: (typeof events)[number] }) {
+  return (
+    <article className="overflow-hidden rounded-[1.8rem] border border-white/70 bg-white/82 shadow-[0_18px_50px_rgba(159,18,57,.09)] transition hover:-translate-y-1">
+      <div className={cn("relative min-h-40 bg-gradient-to-br p-5 text-white", event.gradient)}>
+        <span className="absolute right-4 top-4 rounded-full bg-white/20 px-3 py-1 text-xs font-black backdrop-blur">
+          {event.status}
+        </span>
+        <CalendarDays className="h-8 w-8" />
+        <h3 className="mt-8 text-3xl font-black">{event.name}</h3>
+        <p className="font-semibold text-white/85">
+          {event.venue} · {event.city}
+        </p>
+      </div>
+      <div className="space-y-4 p-5">
+        <div className="grid grid-cols-2 gap-3">
+          <Mini label="Data" value={event.date} />
+          <Mini label="Participantes" value={event.participants} />
+          <Mini label="BeijoChecks" value={event.kisses} />
+          <Mini label="Ranking" value={event.livePosition} />
+        </div>
+        <div className="grid gap-2 sm:grid-cols-2">
+          <Button className="rounded-full bg-gradient-lipstick font-black text-white">
+            Entrar no evento
+          </Button>
+          <Button
+            asChild
+            variant="outline"
+            className="rounded-full border-red-200 font-black text-red-600"
+          >
+            <Link to="/ranking">Ver ranking ao vivo</Link>
+          </Button>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function Info({
   icon: Icon,
   label,
   value,
@@ -123,55 +126,23 @@ function EventMetric({
   value: string | number;
 }) {
   return (
-    <div className="rounded-[1.2rem] bg-black/32 p-3 backdrop-blur">
-      <Icon className="h-4 w-4 text-red-200" />
-      <div className="mt-2 truncate text-lg font-black">{value}</div>
-      <div className="truncate text-[10px] font-black uppercase text-white/46">{label}</div>
+    <div className="rounded-3xl bg-red-50 p-4">
+      <Icon className="h-5 w-5 text-red-500" />
+      <div className="mt-3 text-2xl font-black text-red-600">{value}</div>
+      <div className="text-[10px] font-black uppercase tracking-wide text-muted-foreground">
+        {label}
+      </div>
     </div>
   );
 }
 
-function EventDiscoveryCard({ event }: { event: (typeof events)[number] }) {
+function Mini({ label, value }: { label: string; value: string | number }) {
   return (
-    <article className="relative overflow-hidden rounded-[1.75rem] bg-zinc-900 p-4 card-shadow-premium">
-      <img
-        src={event.image}
-        alt=""
-        className="absolute inset-0 h-full w-full object-cover opacity-58"
-      />
-      <div className="absolute inset-0 bg-gradient-to-r from-black via-black/72 to-black/18" />
-      <div className="relative z-10 grid min-h-[11rem] content-between">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <span className="rounded-full bg-white/12 px-3 py-1 text-[11px] font-black uppercase backdrop-blur">
-              {event.status}
-            </span>
-            <h3 className="mt-3 text-3xl font-black tracking-[-.05em]">{event.name}</h3>
-            <p className="mt-1 text-sm font-bold text-white/62">
-              {event.city} · {event.participants} participantes
-            </p>
-          </div>
-          <span className="shrink-0 rounded-2xl bg-white px-3 py-2 text-xs font-black text-red-600">
-            {event.date}
-          </span>
-        </div>
-        <div className="mt-4 grid grid-cols-2 gap-2">
-          <Link
-            to="/explorar"
-            className="rounded-full bg-white px-4 py-2.5 text-center text-xs font-black text-red-600"
-          >
-            Entrar
-          </Link>
-          <Link
-            to="/ranking"
-            className="rounded-full border border-white/14 bg-white/10 px-4 py-2.5 text-center text-xs font-black"
-          >
-            Ranking ao vivo
-          </Link>
-        </div>
+    <div className="rounded-2xl bg-red-50/70 p-3">
+      <div className="text-lg font-black text-red-600">{value}</div>
+      <div className="text-[10px] font-black uppercase tracking-wide text-muted-foreground">
+        {label}
       </div>
-    </article>
+    </div>
   );
 }
-
-export default EventosPage;

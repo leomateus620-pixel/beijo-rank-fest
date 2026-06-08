@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { AppShell, EventCard, RankingList, SectionHeader } from "@/components/beijocheck/brand";
+import { AppShell, RankingList, SectionHeader } from "@/components/beijocheck/brand";
 import { EventLiveCard } from "@/components/beijocheck/social";
 import { activeEvent, events, users } from "@/data/beijocheck.mock";
 import { Button } from "@/components/ui/button";
@@ -16,14 +16,16 @@ export default function EventosPage() {
     <AppShell>
       <section className="grid gap-5 lg:grid-cols-[1.1fr_.9fr]">
         <EventLiveCard event={activeEvent} />
-        <div className="rounded-[2rem] border border-white/70 bg-white/80 p-5 shadow-[0_18px_50px_rgba(159,18,57,.08)]">
+        <article className="card-3d hover-lift p-4 sm:p-5">
           <p className="text-xs font-black uppercase tracking-[.24em] text-red-500">
             Viralização local
           </p>
-          <h1 className="mt-2 text-4xl font-black">Eventos movimentam o ranking</h1>
-          <p className="mt-3 text-muted-foreground">
-            Entre no evento, explore perfis presentes e acompanhe o ranking ao vivo com BeijoChecks
-            confirmados por consentimento mútuo.
+          <h1 className="mt-2 text-balance text-[clamp(1.6rem,6vw,2.5rem)] font-black leading-tight">
+            Eventos movimentam o ranking
+          </h1>
+          <p className="mt-3 text-sm text-muted-foreground sm:text-base">
+            Entre no evento, explore perfis e acompanhe o ranking ao vivo — só com confirmação
+            mútua.
           </p>
           <div className="mt-5 grid grid-cols-2 gap-3">
             <Info icon={Users} label="Participantes" value={activeEvent.participants} />
@@ -31,33 +33,33 @@ export default function EventosPage() {
             <Info icon={MapPin} label="Cidade" value={activeEvent.city} />
             <Info icon={Radio} label="Status" value="Ao vivo" />
           </div>
-        </div>
+        </article>
       </section>
 
       <section className="mt-8 grid gap-5 lg:grid-cols-[.9fr_1.1fr]">
         <RankingList title="Ranking do evento" items={users.slice(0, 5)} />
         <div>
-          <SectionHeader eyebrow="Destaques" title="Quem está movimentando a pista" />
+          <SectionHeader eyebrow="Destaques" title="Destaques da pista" />
           <div className="grid gap-4 sm:grid-cols-2">
             {users.slice(0, 2).map((u, i) => (
-              <div
+              <article
                 key={u.id}
-                className="rounded-[1.8rem] border border-white/70 bg-white/80 p-5 shadow-[0_18px_50px_rgba(159,18,57,.08)]"
+                className="card-3d hover-lift p-4 sm:p-5"
               >
-                <img src={u.avatar} alt={u.name} className="h-24 w-24 rounded-3xl object-cover" />
-                <h3 className="mt-4 text-2xl font-black">
-                  {i === 0 ? "Destaque da pista" : "Rising do evento"}
+                <img src={u.avatar} alt={u.name} className="h-20 w-20 rounded-3xl object-cover sm:h-24 sm:w-24" />
+                <h3 className="mt-4 text-xl font-black sm:text-2xl">
+                  {i === 0 ? "Destaque da pista" : "Subindo no evento"}
                 </h3>
-                <p className="text-muted-foreground">
+                <p className="mt-1 text-sm text-muted-foreground">
                   {u.name} · {u.kisses} BeijoChecks · {u.badge}
                 </p>
                 <Button
                   asChild
-                  className="mt-4 rounded-full bg-gradient-lipstick font-black text-white"
+                  className="tap-press mt-4 rounded-full bg-gradient-lipstick font-black text-white"
                 >
                   <Link to="/explorar">Explorar perfil</Link>
                 </Button>
-              </div>
+              </article>
             ))}
           </div>
         </div>
@@ -81,7 +83,8 @@ export default function EventosPage() {
 
 function EventStatusCard({ event }: { event: (typeof events)[number] }) {
   return (
-    <article className="overflow-hidden rounded-[1.8rem] border border-white/70 bg-white/82 shadow-[0_18px_50px_rgba(159,18,57,.09)] transition hover:-translate-y-1">
+    <article className="card-3d hover-lift overflow-hidden p-0">
+
       <div className={cn("relative min-h-40 bg-gradient-to-br p-5 text-white", event.gradient)}>
         <span className="absolute right-4 top-4 rounded-full bg-white/20 px-3 py-1 text-xs font-black backdrop-blur">
           {event.status}

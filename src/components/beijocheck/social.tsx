@@ -261,38 +261,38 @@ function MiniStat({ label, value }: { label: string; value: string | number }) {
 
 export function EventLiveCard({ event }: { event: BeijoEvent }) {
   return (
-    <article className="relative min-w-0 overflow-hidden rounded-[2rem] bg-gradient-to-br from-red-600 via-rose-600 to-orange-400 p-5 text-white shadow-[0_28px_90px_rgba(225,29,72,.3)] sm:p-6">
-      <div className="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-white/15 blur-2xl" />
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="text-xs font-black uppercase tracking-[.24em] text-white/70">
-            Evento em alta agora
+    <article className="relative min-w-0 overflow-hidden rounded-[1.65rem] border border-white/70 bg-white/82 p-4 text-red-950 shadow-[0_18px_50px_rgba(159,18,57,.08)] backdrop-blur-xl sm:p-5">
+      <div className="absolute right-0 top-0 h-28 w-28 rounded-full bg-orange-200/35 blur-2xl" />
+      <div className="relative z-10 flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-[11px] font-black uppercase tracking-[.22em] text-red-500">
+            Evento ao vivo
           </p>
-          <h2 className="mt-2 break-words text-[clamp(2rem,8vw,2.5rem)] font-black leading-tight">
+          <h2 className="mt-1 break-words text-[clamp(1.55rem,7vw,2rem)] font-black leading-tight">
             {event.name}
           </h2>
-          <p className="mt-2 font-semibold text-white/85">
-            {event.venue} · {event.city} · {event.date}
+          <p className="mt-1 text-sm font-bold text-muted-foreground">
+            {event.venue} · {event.city}
           </p>
         </div>
-        <span className="rounded-full bg-white/20 px-3 py-1 text-xs font-black backdrop-blur">
+        <span className="shrink-0 rounded-full bg-red-50 px-3 py-1 text-xs font-black text-red-600">
           {event.status === "ativo" ? "Ativo" : event.status}
         </span>
       </div>
-      <div className="mt-6 grid grid-cols-3 gap-2 text-center">
+      <div className="relative z-10 mt-4 grid grid-cols-2 gap-2 text-center">
         <LiveStat label="Participantes" value={event.participants} />
         <LiveStat label="BeijoChecks" value={event.kisses} />
-        <LiveStat label="Status" value={event.livePosition} />
       </div>
-      <div className="mt-5 grid gap-2 sm:grid-cols-2">
-        <Button asChild className="rounded-full bg-white font-black text-red-600 hover:bg-white/90">
+      <div className="relative z-10 mt-4 grid gap-2 sm:grid-cols-2">
+        <Button asChild className="rounded-full bg-gradient-lipstick font-black text-white">
           <Link to="/eventos">Entrar no evento</Link>
         </Button>
         <Button
           asChild
-          className="rounded-full border border-white/40 bg-white/15 font-black text-white hover:bg-white/25"
+          variant="outline"
+          className="rounded-full border-red-200 bg-white font-black text-red-600 hover:bg-red-50"
         >
-          <Link to="/ranking">Ver ranking ao vivo</Link>
+          <Link to="/ranking">Ver ranking</Link>
         </Button>
       </div>
     </article>
@@ -301,63 +301,53 @@ export function EventLiveCard({ event }: { event: BeijoEvent }) {
 
 function LiveStat({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="rounded-2xl bg-white/16 p-3 backdrop-blur">
-      <div className="text-xl font-black">{value}</div>
-      <div className="text-[10px] font-black uppercase tracking-wide text-white/70">{label}</div>
+    <div className="rounded-2xl bg-red-50/75 p-3">
+      <div className="text-xl font-black text-red-600">{value}</div>
+      <div className="text-[10px] font-black uppercase tracking-wide text-muted-foreground">
+        {label}
+      </div>
     </div>
   );
 }
 
 export function RankingPodium({ users }: { users: BeijoUser[] }) {
   return (
-    <div className="grid gap-4 md:grid-cols-3 md:items-end">
+    <div className="grid grid-cols-3 items-end gap-2 sm:gap-4">
       {users.slice(0, 3).map((user, index) => (
         <article
           key={user.id}
           className={cn(
-            "relative overflow-hidden rounded-[2rem] border border-white/70 p-5 shadow-[0_18px_50px_rgba(159,18,57,.12)]",
+            "relative min-w-0 overflow-hidden rounded-[1.35rem] border border-white/70 p-2.5 text-center shadow-[0_16px_44px_rgba(159,18,57,.1)] sm:rounded-[1.75rem] sm:p-4",
             index === 0
-              ? "bg-gradient-to-br from-red-600 to-orange-400 text-white md:-translate-y-5 md:scale-105"
-              : "bg-white/82",
+              ? "order-2 bg-gradient-to-br from-red-600 to-orange-400 text-white sm:-translate-y-3"
+              : index === 1
+                ? "order-1 bg-white/84"
+                : "order-3 bg-white/84",
           )}
         >
-          <div className="absolute right-4 top-3 text-6xl opacity-20">
+          <div className="absolute right-2 top-2 text-3xl opacity-20 sm:text-5xl">
             {index === 0 ? "🥇" : index === 1 ? "🥈" : "🥉"}
           </div>
           <img
             src={user.avatar}
             alt={user.name}
-            className="h-20 w-20 rounded-[1.6rem] border-4 border-white/70 object-cover shadow-xl"
+            className={cn(
+              "mx-auto rounded-[1.1rem] border-2 border-white/80 object-cover shadow-lg",
+              index === 0 ? "h-16 w-16 sm:h-20 sm:w-20" : "h-12 w-12 sm:h-16 sm:w-16",
+            )}
           />
-          <h3 className="mt-4 text-3xl font-black">
-            #{index + 1} {user.name}
-          </h3>
-          <p className={cn("text-sm", index === 0 ? "text-white/80" : "text-muted-foreground")}>
-            {user.city} · {user.event}
+          <div className="mt-2 text-lg font-black leading-none sm:text-2xl">#{index + 1}</div>
+          <h3 className="mt-1 truncate text-sm font-black sm:text-lg">{user.name}</h3>
+          <p
+            className={cn(
+              "truncate text-[10px] font-bold sm:text-xs",
+              index === 0 ? "text-white/78" : "text-muted-foreground",
+            )}
+          >
+            {user.city}
           </p>
-          <div className="mt-4 flex items-end justify-between gap-3">
-            <div>
-              <strong className="text-4xl font-black">{user.points}</strong>
-              <p
-                className={cn(
-                  "text-xs font-bold",
-                  index === 0 ? "text-white/70" : "text-muted-foreground",
-                )}
-              >
-                pontos validados
-              </p>
-            </div>
-            <span
-              className={cn(
-                "rounded-full px-3 py-1 text-xs font-black",
-                index === 0 ? "bg-white/20" : "bg-green-50 text-green-600",
-              )}
-            >
-              subiu {Math.abs(user.growth)}%
-            </span>
-          </div>
-          <div className="mt-4 rounded-2xl bg-white/15 p-3 text-sm font-black">
-            {user.badges[0]}
+          <div className="mt-2 rounded-full bg-white/18 px-2 py-1 text-[10px] font-black sm:text-xs">
+            {user.kisses} BeijoChecks
           </div>
         </article>
       ))}
@@ -365,34 +355,57 @@ export function RankingPodium({ users }: { users: BeijoUser[] }) {
   );
 }
 
-export function MyRankingPositionCard() {
+export function MyRankingPositionCard({ compact = false }: { compact?: boolean }) {
   return (
-    <article className="rounded-[1.8rem] border border-red-100 bg-white/85 p-5 shadow-[0_18px_50px_rgba(159,18,57,.1)]">
-      <p className="text-xs font-black uppercase tracking-[.24em] text-red-500">Minha posição</p>
-      <div className="mt-3 flex items-center justify-between gap-4">
+    <article className="relative overflow-hidden rounded-[1.65rem] border border-red-100 bg-white/86 p-4 shadow-[0_18px_50px_rgba(159,18,57,.1)] backdrop-blur-xl sm:p-5">
+      <div className="absolute right-0 top-0 h-28 w-28 rounded-full bg-red-100/70 blur-2xl" />
+      <div className="relative z-10 flex items-start justify-between gap-3">
         <div>
-          <h3 className="text-4xl font-black text-red-600">#18</h3>
-          <p className="font-bold text-muted-foreground">Santa Rosa · Festa Neon</p>
-          <p className="mt-1 text-sm font-semibold text-green-600">Subiu 2 posições hoje</p>
+          <p className="text-[11px] font-black uppercase tracking-[.22em] text-red-500">
+            Minha posição
+          </p>
+          <div className="mt-2 flex items-end gap-3">
+            <h3 className="text-5xl font-black leading-none text-red-600">#18</h3>
+            <span className="mb-1 rounded-full bg-green-50 px-3 py-1 text-xs font-black text-green-600">
+              +2 hoje
+            </span>
+          </div>
+          <p className="mt-2 font-bold text-muted-foreground">Santa Rosa · Festa Neon</p>
+          <p className="mt-1 text-sm font-black text-red-600">128 BeijoChecks confirmados</p>
         </div>
-        <Trophy className="h-12 w-12 text-orange-500" />
+        <Trophy className="h-10 w-10 shrink-0 text-orange-500" />
       </div>
-      <ShareProfileRankingActions user={users[0]} position={18} compact className="mt-4" />
+      <div className={cn("relative z-10 mt-4", compact && "max-w-xs")}>
+        <ShareProfileRankingActions
+          user={users[0]}
+          position={18}
+          compact
+          triggerLabel={compact ? "Compartilhar" : "Compartilhar ranking"}
+        />
+      </div>
     </article>
   );
 }
 
 export function ShareRankingCard() {
   return (
-    <article className="overflow-hidden rounded-[2rem] border border-white/70 bg-white/85 p-5 shadow-[0_18px_50px_rgba(159,18,57,.1)]">
-      <div className="rounded-[1.5rem] bg-gradient-to-br from-red-600 via-rose-600 to-orange-400 p-5 text-white">
-        <Sparkles className="h-8 w-8" />
-        <h3 className="mt-4 text-3xl font-black">Seu print de hoje está pronto</h3>
-        <p className="mt-2 text-sm text-white/80">
-          Ranking validado, badges e variação de posição em um card compartilhável.
-        </p>
+    <article className="rounded-[1.65rem] border border-white/70 bg-white/84 p-4 shadow-[0_18px_50px_rgba(159,18,57,.08)] backdrop-blur-xl sm:p-5">
+      <div className="flex items-start gap-3">
+        <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-gradient-lipstick text-white shadow-lg">
+          <Sparkles className="h-5 w-5" />
+        </div>
+        <div className="min-w-0">
+          <h3 className="text-xl font-black leading-tight">Competição pronta para compartilhar</h3>
+          <p className="mt-1 text-sm font-semibold text-muted-foreground">
+            Gere um PNG oficial do ranking validado.
+          </p>
+        </div>
       </div>
-      <ShareProfileRankingActions user={users[0]} className="mt-4" />
+      <ShareProfileRankingActions
+        user={users[0]}
+        className="mt-4"
+        triggerLabel="Compartilhar ranking geral"
+      />
     </article>
   );
 }

@@ -142,13 +142,13 @@
     display: none;
   }
   .pb-safe-nav {
-    padding-bottom: calc(7.25rem + env(safe-area-inset-bottom));
+    padding-bottom: calc(6.75rem + env(safe-area-inset-bottom));
   }
   .bottom-safe-nav {
-    bottom: calc(0.75rem + env(safe-area-inset-bottom));
+    bottom: calc(0.7rem + env(safe-area-inset-bottom));
   }
   .text-fluid-hero {
-    font-size: clamp(2.35rem, 12vw, 4.5rem);
+    font-size: clamp(2.1rem, 10vw, 4.25rem);
   }
   .text-fluid-section {
     font-size: clamp(1.65rem, 7vw, 3.75rem);

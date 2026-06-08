@@ -1,21 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import {
-  AppShell,
-  EventCard,
-  MetricCard,
-  RankingList,
-  SectionHeader,
-  UserCard,
-} from "@/components/beijocheck/brand";
+import { AppShell } from "@/components/beijocheck/brand";
 import {
   EventLiveCard,
   MutualConfirmationBadge,
   MyRankingPositionCard,
-  SafetyTrustBar,
 } from "@/components/beijocheck/social";
-import { activeEvent, metrics, myRankingPosition, users, events } from "@/data/beijocheck.mock";
+import { activeEvent, users } from "@/data/beijocheck.mock";
 import { Button } from "@/components/ui/button";
-import { Compass, HeartHandshake, Sparkles, Trophy } from "lucide-react";
+import { Compass, MapPin, ShieldCheck, Trophy } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [{ title: "BeijoCheck — Ranking social com confirmação mútua" }] }),
@@ -25,30 +17,29 @@ export const Route = createFileRoute("/")({
 function IndexPage() {
   return (
     <AppShell>
-      <section className="grid min-w-0 gap-5 xl:grid-cols-[1.15fr_.85fr] xl:items-stretch">
-        <div className="relative min-w-0 overflow-hidden rounded-[2rem] bg-gradient-to-br from-red-600 via-rose-600 to-orange-400 p-5 text-white shadow-[0_32px_100px_rgba(225,29,72,.35)] sm:p-8">
-          <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-white/15 blur-3xl" />
-          <div className="absolute bottom-0 right-8 hidden text-[10rem] opacity-10 sm:block">
-            💋
-          </div>
-          <div className="relative z-10 max-w-2xl min-w-0">
-            <div className="mb-5 flex flex-wrap gap-2">
-              <MutualConfirmationBadge />
-              <span className="rounded-full bg-white/15 px-3 py-1.5 text-xs font-black backdrop-blur">
-                {activeEvent.city} ao vivo
+      <section className="grid min-w-0 gap-4 lg:grid-cols-[1.05fr_.95fr] lg:items-start">
+        <div className="relative min-w-0 overflow-hidden rounded-[1.75rem] border border-white/70 bg-white/84 p-4 shadow-[0_24px_70px_rgba(159,18,57,.12)] backdrop-blur-xl sm:p-7">
+          <div className="absolute right-[-4rem] top-[-4rem] h-48 w-48 rounded-full bg-red-200/55 blur-3xl" />
+          <div className="relative z-10">
+            <div className="mb-3 flex flex-wrap gap-2">
+              <MutualConfirmationBadge compact />
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-orange-50 px-3 py-1.5 text-xs font-black text-orange-600">
+                <MapPin className="h-3.5 w-3.5" /> {activeEvent.city} · {activeEvent.name}
               </span>
             </div>
-            <h1 className="text-fluid-hero text-balance break-words font-black leading-[.95] sm:leading-[.9]">
-              Abra, explore e suba no ranking da noite
-            </h1>
-            <p className="mt-5 max-w-xl text-base font-semibold text-white/85 sm:text-lg">
-              Descubra pessoas e eventos próximos, envie BeijoChecks com validação mútua e acompanhe
-              sua posição por cidade, evento e região.
+            <p className="text-xs font-black uppercase tracking-[.24em] text-red-500">
+              Ranking social por cidade, evento e região
             </p>
-            <div className="mt-7 grid min-w-0 gap-3 sm:flex sm:flex-wrap">
+            <h1 className="mt-2 max-w-2xl text-balance text-[clamp(1.95rem,9.2vw,4rem)] font-black leading-[.92] text-red-950">
+              Quem está em alta perto de você?
+            </h1>
+            <p className="mt-3 max-w-xl text-sm font-semibold leading-relaxed text-muted-foreground sm:text-lg">
+              Explore perfis, entre no evento e acompanhe sua posição.
+            </p>
+            <div className="mt-5 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
               <Button
                 asChild
-                className="h-13 rounded-full bg-white px-6 font-black text-red-600 hover:bg-white/90"
+                className="h-11 rounded-full bg-gradient-lipstick px-4 font-black text-white shadow-[0_16px_42px_rgba(225,29,72,.22)]"
               >
                 <Link to="/explorar">
                   <Compass className="mr-2 h-5 w-5" /> Explorar agora
@@ -56,15 +47,8 @@ function IndexPage() {
               </Button>
               <Button
                 asChild
-                className="h-13 rounded-full border border-white/40 bg-white/15 px-6 font-black text-white backdrop-blur hover:bg-white/25"
-              >
-                <Link to="/registrar">
-                  <HeartHandshake className="mr-2 h-5 w-5" /> Registrar BeijoCheck
-                </Link>
-              </Button>
-              <Button
-                asChild
-                className="h-13 rounded-full border border-white/40 bg-white/15 px-6 font-black text-white backdrop-blur hover:bg-white/25"
+                variant="outline"
+                className="h-11 rounded-full border-red-200 bg-white px-4 font-black text-red-600 hover:bg-red-50"
               >
                 <Link to="/ranking">
                   <Trophy className="mr-2 h-5 w-5" /> Ver ranking
@@ -73,25 +57,41 @@ function IndexPage() {
             </div>
           </div>
         </div>
-        <EventLiveCard event={activeEvent} />
+
+        <div className="grid min-w-0 gap-4">
+          <MyRankingPositionCard compact />
+          <div className="rounded-[1.65rem] border border-white/70 bg-white/78 p-4 shadow-[0_18px_50px_rgba(159,18,57,.08)] backdrop-blur-xl">
+            <div className="flex items-center gap-3">
+              <div className="grid h-11 w-11 place-items-center rounded-2xl bg-red-50 text-red-600">
+                <ShieldCheck className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="font-black text-red-950">Só conta com confirmação mútua</p>
+                <p className="text-sm font-semibold text-muted-foreground">
+                  Ranking validado antes de pontuar.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
-      <section className="mt-6 grid min-w-0 gap-5 lg:grid-cols-[.9fr_1.1fr]">
-        <MyRankingPositionCard />
-        <div className="min-w-0 rounded-[1.8rem] border border-white/70 bg-white/80 p-4 sm:p-5 shadow-[0_18px_50px_rgba(159,18,57,.08)]">
-          <div className="mb-4 flex items-center justify-between gap-4">
+      <section className="mt-4 grid min-w-0 gap-4 lg:grid-cols-[.85fr_1.15fr]">
+        <EventLiveCard event={activeEvent} />
+        <div className="min-w-0 rounded-[1.65rem] border border-white/70 bg-white/80 p-4 shadow-[0_18px_50px_rgba(159,18,57,.08)] backdrop-blur-xl sm:p-5">
+          <div className="mb-4 flex items-center justify-between gap-3">
             <div>
-              <p className="text-xs font-black uppercase tracking-[.24em] text-red-500">
-                Perto de você
+              <p className="text-[11px] font-black uppercase tracking-[.22em] text-red-500">
+                Destaques próximos
               </p>
-              <h2 className="text-balance text-[clamp(1.55rem,7vw,1.875rem)] font-black">
-                Destaques para explorar
+              <h2 className="text-[clamp(1.35rem,6vw,1.8rem)] font-black leading-tight">
+                3 perfis em alta
               </h2>
             </div>
             <Button
               asChild
               variant="outline"
-              className="hidden rounded-full border-red-200 font-black text-red-600 sm:inline-flex"
+              className="hidden rounded-full border-red-200 bg-white font-black text-red-600 sm:inline-flex"
             >
               <Link to="/explorar">Ver todos</Link>
             </Button>
@@ -101,97 +101,26 @@ function IndexPage() {
               <Link
                 key={user.id}
                 to="/explorar"
-                className="group min-w-0 rounded-3xl bg-red-50 p-3 transition hover:-translate-y-1 hover:bg-red-100/70"
+                className="group grid min-w-0 grid-cols-[4.25rem_1fr] items-center gap-3 rounded-3xl bg-red-50/70 p-2.5 transition hover:-translate-y-1 hover:bg-red-100/70 sm:block"
               >
                 <img
                   src={user.avatar}
                   alt={user.name}
-                  className="h-28 w-full rounded-2xl object-cover transition group-hover:scale-[1.02]"
+                  className="h-16 w-16 rounded-2xl object-cover transition group-hover:scale-[1.02] sm:h-24 sm:w-full"
                 />
-                <div className="mt-3 font-black">
-                  {user.name}, {user.age}
-                </div>
-                <div className="text-xs font-bold text-red-600">
-                  {user.distance} · {user.localHighlight}
+                <div className="min-w-0 sm:mt-3">
+                  <div className="truncate font-black">
+                    {user.name}, {user.age}
+                  </div>
+                  <div className="truncate text-xs font-bold text-red-600">
+                    {user.distance} · {user.localHighlight}
+                  </div>
                 </div>
               </Link>
             ))}
           </div>
         </div>
       </section>
-
-      <section className="mt-6 grid min-w-0 gap-4 sm:grid-cols-3">
-        {metrics.map((metric) => (
-          <MetricCard key={metric.label} metric={metric} />
-        ))}
-      </section>
-
-      <section className="mt-8 grid min-w-0 gap-5 xl:grid-cols-[1.1fr_.9fr]">
-        <div>
-          <SectionHeader
-            eyebrow="Evento ativo"
-            title="Ranking ao vivo para entrar agora"
-            action="Ver eventos"
-          />
-          <div className="grid gap-4 md:grid-cols-2">
-            {events.slice(0, 2).map((event) => (
-              <EventCard key={event.id} event={event} />
-            ))}
-          </div>
-        </div>
-        <div>
-          <SectionHeader eyebrow="Competição" title="Quem está em alta" action="Compartilhar" />
-          <RankingList title="Top local validado" items={users.slice(0, 5)} />
-        </div>
-      </section>
-
-      <section className="mt-8 grid min-w-0 gap-5 lg:grid-cols-[.8fr_1.2fr]">
-        <SafetyTrustBar />
-        <div className="min-w-0 rounded-[1.8rem] border border-white/70 bg-white/80 p-4 sm:p-5 shadow-[0_18px_50px_rgba(159,18,57,.08)]">
-          <p className="text-xs font-black uppercase tracking-[.24em] text-red-500">
-            Como funciona
-          </p>
-          <h2 className="mt-1 text-3xl font-black">BeijoCheck confirmado gera pontos</h2>
-          <div className="mt-4 grid gap-3 sm:grid-cols-3">
-            {[
-              ["1", "Explore perfis com várias fotos"],
-              ["2", "Envie interesse ou BeijoCheck"],
-              ["3", "Só pontua com confirmação mútua"],
-            ].map(([n, text]) => (
-              <div key={n} className="rounded-3xl bg-red-50 p-4">
-                <div className="grid h-10 w-10 place-items-center rounded-full bg-gradient-lipstick font-black text-white">
-                  {n}
-                </div>
-                <p className="mt-3 font-black text-red-700">{text}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="mt-10">
-        <SectionHeader
-          eyebrow="Perfis em destaque"
-          title="Abra durante o evento e veja quem está em alta"
-          action="Explorar"
-        />
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {users.slice(0, 3).map((user) => (
-            <UserCard key={user.id} user={user} />
-          ))}
-        </div>
-      </section>
-
-      <div className="mt-8 rounded-[1.8rem] border border-white/70 bg-white/80 p-5 text-center shadow-[0_18px_50px_rgba(159,18,57,.08)]">
-        <Sparkles className="mx-auto h-8 w-8 text-red-500" />
-        <p className="mt-2 font-black">
-          Você controla sua visibilidade. Sem conteúdo explícito. Denúncia e bloqueio sempre
-          disponíveis.
-        </p>
-        <p className="text-sm text-muted-foreground">
-          {myRankingPosition.nextTarget} para virar destaque do evento.
-        </p>
-      </div>
     </AppShell>
   );
 }

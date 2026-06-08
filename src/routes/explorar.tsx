@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AppShell, Icons } from "@/components/beijocheck/brand";
-import { BeijoCheckFlow, SafetyTrustBar, SwipeProfileCard } from "@/components/beijocheck/social";
+import { SafetyTrustBar, SwipeProfileCard } from "@/components/beijocheck/social";
 import { activeEvent, cities, events, type BeijoUser, users } from "@/data/beijocheck.mock";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -16,14 +16,25 @@ import { Ban, EyeOff, Flag, ShieldCheck } from "lucide-react";
 import { ShareProfileRankingActions } from "@/components/beijocheck/share";
 
 export const Route = createFileRoute("/explorar")({
-  head: () => ({ meta: [{ title: "Explorar — BeijoCheck" }] }),
+  head: () => ({ meta: [{ title: "Radar da festa — BeijoCheck" }] }),
+  validateSearch: (search: Record<string, unknown>) => ({
+    focus: search.focus != null ? Number(search.focus) : undefined,
+  }),
   component: ExplorarPage,
 });
 
 function ExplorarPage() {
+  const { focus } = Route.useSearch();
   const [selected, setSelected] = useState<BeijoUser | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const activeUser = users[activeIndex % users.length];
+
+  useEffect(() => {
+    if (focus != null) {
+      const target = users.find((u) => u.id === focus);
+      if (target) setSelected(target);
+    }
+  }, [focus]);
 
   function nextProfile() {
     setActiveIndex((index) => (index + 1) % users.length);
@@ -32,74 +43,71 @@ function ExplorarPage() {
   return (
     <AppShell>
       <section className="grid min-w-0 gap-4 lg:grid-cols-[.9fr_1.1fr] lg:items-center">
-        <div className="min-w-0 rounded-[1.8rem] border border-white/70 bg-white/78 p-4 shadow-[0_18px_50px_rgba(159,18,57,.08)] backdrop-blur-xl sm:p-7">
+        <article className="card-3d hover-lift min-w-0 p-4 sm:p-6">
           <p className="break-words text-xs font-black uppercase tracking-[.18em] text-red-500">
-            Explorar perto
+            Radar da festa
           </p>
-          <h1 className="mt-2 text-balance break-words text-[clamp(2.05rem,9.2vw,3.75rem)] font-black leading-[.98]">
-            Veja fotos, sinta a vibe e interaja com segurança
+          <h1 className="mt-2 text-balance break-words text-fluid-hero font-black leading-[1] text-red-950">
+            Descubra quem está em alta no evento
           </h1>
-          <p className="mt-3 max-w-2xl break-words text-sm leading-relaxed text-muted-foreground sm:mt-4 sm:text-base">
-            Deslize horizontalmente nas fotos antes de pular, curtir ou enviar um BeijoCheck. Só
-            conta quando os dois confirmam.
+          <p className="mt-3 max-w-2xl break-words text-sm leading-relaxed text-muted-foreground sm:text-base">
+            Veja destaques, curta perfis e envie BeijoCheck apenas com confirmação mútua.
           </p>
-          <div className="relative mt-4 min-w-0 sm:mt-5">
+          <div className="relative mt-4 min-w-0">
             <Icons.Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-red-500" />
             <Input
-              className="h-12 min-w-0 rounded-full border-red-100 bg-white pl-11 text-sm shadow-sm sm:h-13"
-              placeholder="Buscar nome, cidade, interesse ou evento"
+              className="h-12 min-w-0 rounded-full border-red-100 bg-white pl-11 text-sm shadow-sm"
+              placeholder="Buscar nome, cidade ou evento"
             />
           </div>
           <div className="scrollbar-hide mt-4 flex max-w-full gap-2 overflow-x-auto overscroll-x-contain pb-1">
-            {[activeEvent.name, ...cities, "Perto de mim", "18+", "Top 10"].map((filter, i) => (
+            {[activeEvent.name, ...cities, "Perto de mim", "Top 10"].map((filter, i) => (
               <button
                 key={filter}
-                className={`shrink-0 rounded-full px-4 py-2 text-sm font-black ${i === 0 ? "bg-gradient-lipstick text-white" : "bg-red-50 text-red-600"}`}
+                className={`tap-press shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-sm font-black ${i === 0 ? "bg-gradient-lipstick text-white shadow-md shadow-red-500/20" : "bg-white/80 text-red-600 hover:bg-red-50"}`}
               >
                 {filter}
               </button>
             ))}
           </div>
-          <SafetyTrustBar className="mt-5" />
-        </div>
+          <SafetyTrustBar className="mt-4" />
+        </article>
 
         <div className="min-w-0">
           <SwipeProfileCard user={activeUser} onProfile={setSelected} onNext={nextProfile} />
-          <p className="mt-3 text-center text-xs font-bold text-muted-foreground">
-            Dica: arraste as fotos para o lado dentro do card antes de decidir.
-          </p>
         </div>
       </section>
 
-      <section className="mt-6 grid min-w-0 gap-5 lg:mt-8 lg:grid-cols-[.7fr_1.3fr]">
-        <BeijoCheckFlow compact />
-        <div className="min-w-0 rounded-[1.8rem] border border-white/70 bg-white/80 p-4 sm:p-5 shadow-[0_18px_50px_rgba(159,18,57,.08)]">
-          <p className="text-xs font-black uppercase tracking-[.24em] text-red-500">
-            Em alta agora
-          </p>
-          <h2 className="mt-1 text-balance break-words text-[clamp(1.55rem,7vw,1.875rem)] font-black">
-            Pessoas no evento {activeEvent.name}
-          </h2>
+      <section className="mt-6 min-w-0 lg:mt-8">
+        <article className="card-3d min-w-0 p-4 sm:p-5">
+          <div className="flex items-end justify-between gap-3">
+            <div className="min-w-0">
+              <p className="text-xs font-black uppercase tracking-[.24em] text-red-500">
+                Destaques do evento
+              </p>
+              <h2 className="mt-1 text-balance break-words text-[clamp(1.3rem,5.5vw,1.7rem)] font-black leading-tight">
+                Em alta em {activeEvent.name}
+              </h2>
+            </div>
+          </div>
           <div className="mt-4 grid min-w-0 gap-3 sm:grid-cols-3">
             {users.slice(0, 3).map((user) => (
               <button
                 key={user.id}
                 onClick={() => setSelected(user)}
-                className="min-w-0 rounded-3xl bg-red-50 p-3 text-left transition hover:-translate-y-1 hover:bg-red-100/70"
+                className="tap-press min-w-0 rounded-3xl border border-white/60 bg-white/75 p-3 text-left shadow-sm transition hover:-translate-y-1 hover:bg-white hover:shadow-lg"
               >
                 <img
                   src={user.avatar}
                   alt={user.name}
-                  className="h-28 w-full rounded-2xl object-cover"
+                  className="h-24 w-full rounded-2xl object-cover sm:h-28"
                 />
-                <div className="mt-3 font-black">
-                  {user.name}, {user.age}
-                </div>
-                <div className="text-xs font-bold text-red-600">{user.localHighlight}</div>
+                <div className="mt-3 truncate font-black">{user.name}</div>
+                <div className="truncate text-xs font-bold text-red-600">{user.localHighlight}</div>
               </button>
             ))}
           </div>
-        </div>
+        </article>
       </section>
       <ProfileModal user={selected} onOpenChange={(open) => !open && setSelected(null)} />
     </AppShell>
@@ -118,7 +126,7 @@ function ProfileModal({
       <DialogContent className="max-h-[90vh] w-[calc(100vw-1.5rem)] max-w-lg overflow-y-auto rounded-[2rem] border-white/70 bg-white/95 p-0 shadow-[0_30px_100px_rgba(159,18,57,.35)]">
         {user && (
           <>
-            <div className="relative h-72 overflow-hidden rounded-t-[2rem]">
+            <div className="relative h-60 overflow-hidden rounded-t-[2rem] sm:h-72">
               <img src={user.photos[0]} alt={user.name} className="h-full w-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
               <div className="absolute bottom-5 left-5 right-5 text-white">
@@ -126,11 +134,11 @@ function ProfileModal({
                   {user.badge}
                 </span>
                 <DialogHeader className="mt-3 text-left">
-                  <DialogTitle className="break-words text-[clamp(2rem,9vw,2.5rem)] font-black leading-tight">
-                    {user.name}, {user.age}
+                  <DialogTitle className="break-words text-[clamp(1.6rem,7vw,2.25rem)] font-black leading-tight">
+                    {user.name}
                   </DialogTitle>
                   <DialogDescription className="text-white/85">
-                    {user.city} · {user.event} · {user.distance}
+                    {user.city} · {user.event}
                   </DialogDescription>
                 </DialogHeader>
               </div>
@@ -141,7 +149,7 @@ function ProfileModal({
                 {[
                   { l: "Ranking", v: `#${user.rank}` },
                   { l: "BeijoChecks", v: user.kisses },
-                  { l: "Matches", v: user.matches },
+                  { l: "Confirmações", v: user.matches },
                 ].map((s) => (
                   <div key={s.l} className="min-w-0 rounded-2xl bg-red-50 p-3 sm:p-4">
                     <div className="text-2xl font-black text-red-600">{s.v}</div>
@@ -155,7 +163,7 @@ function ProfileModal({
                 {user.interests.map((interest) => (
                   <span
                     key={interest}
-                    className="shrink-0 rounded-full bg-orange-50 px-3 py-1 text-sm font-bold text-orange-600"
+                    className="shrink-0 whitespace-nowrap rounded-full bg-orange-50 px-3 py-1 text-sm font-bold text-orange-600"
                   >
                     {interest}
                   </span>
@@ -166,18 +174,18 @@ function ProfileModal({
                 pode ocultar seu perfil do ranking. Sem exposição indevida.
               </div>
               <div className="grid gap-2 sm:grid-cols-3">
-                <Button className="rounded-full bg-gradient-lipstick font-black text-white">
+                <Button className="tap-press rounded-full bg-gradient-lipstick font-black text-white">
                   Interessar
                 </Button>
                 <Button
                   variant="outline"
-                  className="rounded-full border-red-200 font-black text-red-600"
+                  className="tap-press rounded-full border-red-200 font-black text-red-600"
                 >
                   BeijoCheck
                 </Button>
                 <Button
                   variant="outline"
-                  className="rounded-full border-red-200 font-black text-red-600"
+                  className="tap-press rounded-full border-red-200 font-black text-red-600"
                 >
                   Salvar
                 </Button>

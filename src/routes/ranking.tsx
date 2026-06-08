@@ -186,8 +186,12 @@ function RankingRow({ row, index }: { row: ReturnType<typeof getRows>[number]; i
         #{index + 1}
       </span>
       <div className="flex min-w-0 items-center gap-3">
-        {"avatar" in row && row.avatar && (
-          <img src={row.avatar} alt={row.name} className="h-10 w-10 rounded-2xl object-cover" />
+        {"avatar" in row && typeof row.avatar === "string" && row.avatar && (
+          <img
+            src={row.avatar as string}
+            alt={row.name}
+            className="h-10 w-10 rounded-2xl object-cover"
+          />
         )}
         <div className="min-w-0">
           <div className="truncate font-black">{row.name}</div>

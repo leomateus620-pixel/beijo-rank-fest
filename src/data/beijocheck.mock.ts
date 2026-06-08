@@ -119,7 +119,7 @@ export const users: BeijoUser[] = [
     kisses: 64,
     points: 640,
     growth: 9,
-    badge: "Rising",
+    badge: "Subindo",
     status: "Subindo rápido",
     avatar:
       "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=900&q=80",
@@ -132,10 +132,10 @@ export const users: BeijoUser[] = [
     matches: 31,
     interests: ["Rodeio", "Dança", "Amigos", "Festival"],
     distance: "4,1 km",
-    localHighlight: "Rising do evento",
+    localHighlight: "Subindo no evento",
     privacy: "visível",
     confirmationStatus: "novo",
-    badges: ["Rising", "Em alta hoje", "Evento em alta"],
+    badges: ["Subindo", "Em alta hoje", "Evento em alta"],
   },
   {
     id: 4,

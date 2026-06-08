@@ -7,7 +7,7 @@ import {
 } from "@/components/beijocheck/social";
 import { activeEvent, users } from "@/data/beijocheck.mock";
 import { Button } from "@/components/ui/button";
-import { Compass, MapPin, ShieldCheck, Trophy } from "lucide-react";
+import { ArrowUpRight, Compass, MapPin, ShieldCheck, Trophy } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [{ title: "BeijoCheck — Ranking social com confirmação mútua" }] }),
@@ -18,8 +18,8 @@ function IndexPage() {
   return (
     <AppShell>
       <section className="grid min-w-0 gap-4 lg:grid-cols-[1.05fr_.95fr] lg:items-start">
-        <div className="relative min-w-0 overflow-hidden rounded-[1.75rem] border border-white/70 bg-white/84 p-4 shadow-[0_24px_70px_rgba(159,18,57,.12)] backdrop-blur-xl sm:p-7">
-          <div className="absolute right-[-4rem] top-[-4rem] h-48 w-48 rounded-full bg-red-200/55 blur-3xl" />
+        <article className="card-3d hover-lift relative min-w-0 overflow-hidden p-4 sm:p-7">
+          <div className="absolute right-[-4rem] top-[-4rem] h-48 w-48 rounded-full bg-red-200/45 blur-3xl" />
           <div className="relative z-10">
             <div className="mb-3 flex flex-wrap gap-2">
               <MutualConfirmationBadge compact />
@@ -30,16 +30,16 @@ function IndexPage() {
             <p className="text-xs font-black uppercase tracking-[.24em] text-red-500">
               Ranking social por cidade, evento e região
             </p>
-            <h1 className="mt-2 max-w-2xl text-balance text-[clamp(1.95rem,9.2vw,4rem)] font-black leading-[.92] text-red-950">
-              Quem está em alta perto de você?
+            <h1 className="mt-2 max-w-2xl text-balance text-fluid-hero font-black leading-[.95] text-red-950">
+              O ranking está rolando agora
             </h1>
-            <p className="mt-3 max-w-xl text-sm font-semibold leading-relaxed text-muted-foreground sm:text-lg">
-              Explore perfis, entre no evento e acompanhe sua posição.
+            <p className="mt-3 max-w-xl text-sm font-semibold leading-relaxed text-muted-foreground sm:text-base">
+              {activeEvent.city} em disputa. Acompanhe sua posição e os destaques próximos.
             </p>
             <div className="mt-5 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
               <Button
                 asChild
-                className="h-11 rounded-full bg-gradient-lipstick px-4 font-black text-white shadow-[0_16px_42px_rgba(225,29,72,.22)]"
+                className="tap-press h-11 rounded-full bg-gradient-lipstick px-4 font-black text-white shadow-[0_16px_42px_rgba(225,29,72,.22)]"
               >
                 <Link to="/explorar">
                   <Compass className="mr-2 h-5 w-5" /> Explorar agora
@@ -48,7 +48,7 @@ function IndexPage() {
               <Button
                 asChild
                 variant="outline"
-                className="h-11 rounded-full border-red-200 bg-white px-4 font-black text-red-600 hover:bg-red-50"
+                className="tap-press h-11 rounded-full border-red-200 bg-white px-4 font-black text-red-600 hover:bg-red-50"
               >
                 <Link to="/ranking">
                   <Trophy className="mr-2 h-5 w-5" /> Ver ranking
@@ -56,11 +56,13 @@ function IndexPage() {
               </Button>
             </div>
           </div>
-        </div>
+        </article>
 
         <div className="grid min-w-0 gap-4">
-          <MyRankingPositionCard compact />
-          <div className="rounded-[1.65rem] border border-white/70 bg-white/78 p-4 shadow-[0_18px_50px_rgba(159,18,57,.08)] backdrop-blur-xl">
+          <Link to="/ranking" className="tap-press block">
+            <MyRankingPositionCard compact />
+          </Link>
+          <div className="card-3d hover-lift p-4">
             <div className="flex items-center gap-3">
               <div className="grid h-11 w-11 place-items-center rounded-2xl bg-red-50 text-red-600">
                 <ShieldCheck className="h-5 w-5" />
@@ -77,23 +79,27 @@ function IndexPage() {
       </section>
 
       <section className="mt-4 grid min-w-0 gap-4 lg:grid-cols-[.85fr_1.15fr]">
-        <EventLiveCard event={activeEvent} />
-        <div className="min-w-0 rounded-[1.65rem] border border-white/70 bg-white/80 p-4 shadow-[0_18px_50px_rgba(159,18,57,.08)] backdrop-blur-xl sm:p-5">
+        <Link to="/eventos" className="tap-press block min-w-0">
+          <EventLiveCard event={activeEvent} />
+        </Link>
+        <article className="card-3d hover-lift min-w-0 p-4 sm:p-5">
           <div className="mb-4 flex items-center justify-between gap-3">
-            <div>
+            <div className="min-w-0">
               <p className="text-[11px] font-black uppercase tracking-[.22em] text-red-500">
                 Destaques próximos
               </p>
-              <h2 className="text-[clamp(1.35rem,6vw,1.8rem)] font-black leading-tight">
+              <h2 className="text-[clamp(1.25rem,5.5vw,1.7rem)] font-black leading-tight">
                 3 perfis em alta
               </h2>
             </div>
             <Button
               asChild
               variant="outline"
-              className="hidden rounded-full border-red-200 bg-white font-black text-red-600 sm:inline-flex"
+              className="tap-press hidden rounded-full border-red-200 bg-white font-black text-red-600 sm:inline-flex"
             >
-              <Link to="/explorar">Ver todos</Link>
+              <Link to="/explorar">
+                Ver todos <ArrowUpRight className="ml-1 h-4 w-4" />
+              </Link>
             </Button>
           </div>
           <div className="grid min-w-0 gap-3 sm:grid-cols-3">
@@ -101,7 +107,8 @@ function IndexPage() {
               <Link
                 key={user.id}
                 to="/explorar"
-                className="group grid min-w-0 grid-cols-[4.25rem_1fr] items-center gap-3 rounded-3xl bg-red-50/70 p-2.5 transition hover:-translate-y-1 hover:bg-red-100/70 sm:block"
+                search={{ focus: user.id }}
+                className="group tap-press grid min-w-0 grid-cols-[4.25rem_1fr] items-center gap-3 rounded-3xl border border-white/60 bg-white/65 p-2.5 shadow-sm transition hover:-translate-y-1 hover:bg-white hover:shadow-lg sm:block"
               >
                 <img
                   src={user.avatar}
@@ -113,13 +120,13 @@ function IndexPage() {
                     {user.name}, {user.age}
                   </div>
                   <div className="truncate text-xs font-bold text-red-600">
-                    {user.distance} · {user.localHighlight}
+                    {user.localHighlight}
                   </div>
                 </div>
               </Link>
             ))}
           </div>
-        </div>
+        </article>
       </section>
     </AppShell>
   );

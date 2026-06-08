@@ -15,6 +15,8 @@ import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as FestasRouteImport } from './routes/festas'
 import { Route as ExplorarRouteImport } from './routes/explorar'
 import { Route as EventosRouteImport } from './routes/eventos'
+import { Route as CurtidasRouteImport } from './routes/curtidas'
+import { Route as ChatRouteImport } from './routes/chat'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AmigosRouteImport } from './routes/amigos'
 import { Route as IndexRouteImport } from './routes/index'
@@ -50,6 +52,16 @@ const EventosRoute = EventosRouteImport.update({
   path: '/eventos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CurtidasRoute = CurtidasRouteImport.update({
+  id: '/curtidas',
+  path: '/curtidas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChatRoute = ChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -75,6 +87,8 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/amigos': typeof AmigosRoute
   '/auth': typeof AuthRoute
+  '/chat': typeof ChatRoute
+  '/curtidas': typeof CurtidasRoute
   '/eventos': typeof EventosRoute
   '/explorar': typeof ExplorarRoute
   '/festas': typeof FestasRoute
@@ -87,6 +101,8 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/amigos': typeof AmigosRoute
   '/auth': typeof AuthRoute
+  '/chat': typeof ChatRoute
+  '/curtidas': typeof CurtidasRoute
   '/eventos': typeof EventosRoute
   '/explorar': typeof ExplorarRoute
   '/festas': typeof FestasRoute
@@ -100,6 +116,8 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/amigos': typeof AmigosRoute
   '/auth': typeof AuthRoute
+  '/chat': typeof ChatRoute
+  '/curtidas': typeof CurtidasRoute
   '/eventos': typeof EventosRoute
   '/explorar': typeof ExplorarRoute
   '/festas': typeof FestasRoute
@@ -114,6 +132,8 @@ export interface FileRouteTypes {
     | '/'
     | '/amigos'
     | '/auth'
+    | '/chat'
+    | '/curtidas'
     | '/eventos'
     | '/explorar'
     | '/festas'
@@ -126,6 +146,8 @@ export interface FileRouteTypes {
     | '/'
     | '/amigos'
     | '/auth'
+    | '/chat'
+    | '/curtidas'
     | '/eventos'
     | '/explorar'
     | '/festas'
@@ -138,6 +160,8 @@ export interface FileRouteTypes {
     | '/'
     | '/amigos'
     | '/auth'
+    | '/chat'
+    | '/curtidas'
     | '/eventos'
     | '/explorar'
     | '/festas'
@@ -151,6 +175,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AmigosRoute: typeof AmigosRoute
   AuthRoute: typeof AuthRoute
+  ChatRoute: typeof ChatRoute
+  CurtidasRoute: typeof CurtidasRoute
   EventosRoute: typeof EventosRoute
   ExplorarRoute: typeof ExplorarRoute
   FestasRoute: typeof FestasRoute
@@ -204,6 +230,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EventosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/curtidas': {
+      id: '/curtidas'
+      path: '/curtidas'
+      fullPath: '/curtidas'
+      preLoaderRoute: typeof CurtidasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/chat': {
+      id: '/chat'
+      path: '/chat'
+      fullPath: '/chat'
+      preLoaderRoute: typeof ChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -239,6 +279,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AmigosRoute: AmigosRoute,
   AuthRoute: AuthRoute,
+  ChatRoute: ChatRoute,
+  CurtidasRoute: CurtidasRoute,
   EventosRoute: EventosRoute,
   ExplorarRoute: ExplorarRoute,
   FestasRoute: FestasRoute,

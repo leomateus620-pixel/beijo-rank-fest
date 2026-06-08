@@ -237,7 +237,27 @@ function PerfilPage() {
           </div>
         </div>
       </section>
+
+      <section className="mt-8">
+        <SectionHeader eyebrow="Conta" title="Configurações" />
+        <article className="card-3d flex flex-col items-start justify-between gap-3 p-5 sm:flex-row sm:items-center">
+          <div className="min-w-0">
+            <p className="font-black text-red-950">Sair da conta</p>
+            <p className="text-sm font-semibold text-muted-foreground">
+              Encerrar esta sessão e voltar para a tela de login.
+            </p>
+          </div>
+          <Button
+            onClick={signOut}
+            variant="outline"
+            className="rounded-full border-red-200 bg-white font-black text-red-600 hover:bg-red-50"
+          >
+            <LogOut className="mr-2 h-4 w-4" /> Sair
+          </Button>
+        </article>
+      </section>
     </AppShell>
+
   );
 }
 

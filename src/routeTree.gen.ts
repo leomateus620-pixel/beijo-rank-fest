@@ -13,6 +13,8 @@ import { Route as RegistrarRouteImport } from './routes/registrar'
 import { Route as RankingRouteImport } from './routes/ranking'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as FestasRouteImport } from './routes/festas'
+import { Route as ExplorarRouteImport } from './routes/explorar'
+import { Route as EventosRouteImport } from './routes/eventos'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AmigosRouteImport } from './routes/amigos'
 import { Route as IndexRouteImport } from './routes/index'
@@ -36,6 +38,16 @@ const PerfilRoute = PerfilRouteImport.update({
 const FestasRoute = FestasRouteImport.update({
   id: '/festas',
   path: '/festas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExplorarRoute = ExplorarRouteImport.update({
+  id: '/explorar',
+  path: '/explorar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventosRoute = EventosRouteImport.update({
+  id: '/eventos',
+  path: '/eventos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -63,6 +75,8 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/amigos': typeof AmigosRoute
   '/auth': typeof AuthRoute
+  '/eventos': typeof EventosRoute
+  '/explorar': typeof ExplorarRoute
   '/festas': typeof FestasRoute
   '/perfil': typeof PerfilRoute
   '/ranking': typeof RankingRoute
@@ -73,6 +87,8 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/amigos': typeof AmigosRoute
   '/auth': typeof AuthRoute
+  '/eventos': typeof EventosRoute
+  '/explorar': typeof ExplorarRoute
   '/festas': typeof FestasRoute
   '/perfil': typeof PerfilRoute
   '/ranking': typeof RankingRoute
@@ -84,6 +100,8 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/amigos': typeof AmigosRoute
   '/auth': typeof AuthRoute
+  '/eventos': typeof EventosRoute
+  '/explorar': typeof ExplorarRoute
   '/festas': typeof FestasRoute
   '/perfil': typeof PerfilRoute
   '/ranking': typeof RankingRoute
@@ -96,6 +114,8 @@ export interface FileRouteTypes {
     | '/'
     | '/amigos'
     | '/auth'
+    | '/eventos'
+    | '/explorar'
     | '/festas'
     | '/perfil'
     | '/ranking'
@@ -106,6 +126,8 @@ export interface FileRouteTypes {
     | '/'
     | '/amigos'
     | '/auth'
+    | '/eventos'
+    | '/explorar'
     | '/festas'
     | '/perfil'
     | '/ranking'
@@ -116,6 +138,8 @@ export interface FileRouteTypes {
     | '/'
     | '/amigos'
     | '/auth'
+    | '/eventos'
+    | '/explorar'
     | '/festas'
     | '/perfil'
     | '/ranking'
@@ -127,6 +151,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AmigosRoute: typeof AmigosRoute
   AuthRoute: typeof AuthRoute
+  EventosRoute: typeof EventosRoute
+  ExplorarRoute: typeof ExplorarRoute
   FestasRoute: typeof FestasRoute
   PerfilRoute: typeof PerfilRoute
   RankingRoute: typeof RankingRoute
@@ -164,6 +190,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FestasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/explorar': {
+      id: '/explorar'
+      path: '/explorar'
+      fullPath: '/explorar'
+      preLoaderRoute: typeof ExplorarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/eventos': {
+      id: '/eventos'
+      path: '/eventos'
+      fullPath: '/eventos'
+      preLoaderRoute: typeof EventosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -199,6 +239,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AmigosRoute: AmigosRoute,
   AuthRoute: AuthRoute,
+  EventosRoute: EventosRoute,
+  ExplorarRoute: ExplorarRoute,
   FestasRoute: FestasRoute,
   PerfilRoute: PerfilRoute,
   RankingRoute: RankingRoute,
@@ -208,3 +250,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

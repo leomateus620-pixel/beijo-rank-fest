@@ -208,7 +208,7 @@ function Registrar() {
                   <SelectValue placeholder={events[0].name} />
                 </SelectTrigger>
                 <SelectContent>
-                  {parties?.map((p) => (
+                  {parties?.parties?.map((p) => (
                     <SelectItem key={p.id} value={p.id}>
                       {p.name}
                     </SelectItem>

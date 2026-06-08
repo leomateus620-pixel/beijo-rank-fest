@@ -1,9 +1,10 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import {
   Bell,
   Filter,
   Flame,
   HeartHandshake,
+  LogOut,
   MapPin,
   Search,
   SlidersHorizontal,
@@ -16,10 +17,21 @@ import {
   Medal,
   User,
 } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
 import type { BeijoUser } from "@/data/beijocheck.mock";
 import { events, users } from "@/data/beijocheck.mock";
+
 
 export function BeijoLogo({ compact = false }: { compact?: boolean }) {
   return (

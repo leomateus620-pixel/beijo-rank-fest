@@ -1,14 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import {
-  AppShell,
-  Icons,
-  MatchButton,
-  SectionHeader,
-  UserCard,
-} from "@/components/beijocheck/brand";
-import { cities, events, type BeijoUser, users } from "@/data/beijocheck.mock";
+import { AppShell, Icons } from "@/components/beijocheck/brand";
+import { BeijoCheckFlow, SafetyTrustBar, SwipeProfileCard } from "@/components/beijocheck/social";
+import { activeEvent, cities, events, type BeijoUser, users } from "@/data/beijocheck.mock";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -16,6 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Ban, EyeOff, Flag, ShieldCheck } from "lucide-react";
 
 export const Route = createFileRoute("/explorar")({
   head: () => ({ meta: [{ title: "Explorar — BeijoCheck" }] }),
@@ -24,46 +21,81 @@ export const Route = createFileRoute("/explorar")({
 
 function ExplorarPage() {
   const [selected, setSelected] = useState<BeijoUser | null>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const activeUser = users[activeIndex % users.length];
+
+  function nextProfile() {
+    setActiveIndex((index) => (index + 1) % users.length);
+  }
+
   return (
     <AppShell>
-      <section className="rounded-[2.1rem] border border-white/70 bg-white/75 p-5 shadow-[0_18px_50px_rgba(159,18,57,.08)] backdrop-blur-xl sm:p-7">
-        <p className="text-xs font-black uppercase tracking-[.24em] text-red-500">Explorar</p>
-        <div className="mt-2 grid gap-5 lg:grid-cols-[1fr_auto] lg:items-end">
-          <div>
-            <h1 className="text-4xl font-black sm:text-6xl">
-              Descubra pessoas, veja rankings e dê match
-            </h1>
-            <p className="mt-3 max-w-2xl text-muted-foreground">
-              Feed social com perfis, badges, eventos atuais e confirmação mútua sem conteúdo
-              explícito.
-            </p>
-          </div>
-          <div className="relative min-w-80">
+      <section className="grid gap-5 lg:grid-cols-[.9fr_1.1fr] lg:items-center">
+        <div className="rounded-[2.1rem] border border-white/70 bg-white/78 p-5 shadow-[0_18px_50px_rgba(159,18,57,.08)] backdrop-blur-xl sm:p-7">
+          <p className="text-xs font-black uppercase tracking-[.24em] text-red-500">
+            Explorar perto
+          </p>
+          <h1 className="mt-2 text-4xl font-black leading-[.95] sm:text-6xl">
+            Veja fotos, sinta a vibe e interaja com segurança
+          </h1>
+          <p className="mt-4 max-w-2xl text-muted-foreground">
+            Deslize horizontalmente nas fotos antes de pular, curtir ou enviar um BeijoCheck. Só
+            conta quando os dois confirmam.
+          </p>
+          <div className="relative mt-5">
             <Icons.Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-red-500" />
             <Input
               className="h-13 rounded-full border-red-100 bg-white pl-11 shadow-sm"
-              placeholder="Buscar nome, cidade ou evento"
+              placeholder="Buscar nome, cidade, interesse ou evento"
             />
           </div>
+          <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
+            {[activeEvent.name, ...cities, "Perto de mim", "18+", "Top 10"].map((filter, i) => (
+              <button
+                key={filter}
+                className={`shrink-0 rounded-full px-4 py-2 text-sm font-black ${i === 0 ? "bg-gradient-lipstick text-white" : "bg-red-50 text-red-600"}`}
+              >
+                {filter}
+              </button>
+            ))}
+          </div>
+          <SafetyTrustBar className="mt-5" />
         </div>
-        <div className="mt-5 flex gap-2 overflow-x-auto pb-1">
-          {[...cities, "18-24", "Top 10", events[0].name].map((filter, i) => (
-            <button
-              key={filter}
-              className={`shrink-0 rounded-full px-4 py-2 text-sm font-black ${i === 0 ? "bg-gradient-lipstick text-white" : "bg-red-50 text-red-600"}`}
-            >
-              {filter}
-            </button>
-          ))}
+
+        <div>
+          <SwipeProfileCard user={activeUser} onProfile={setSelected} onNext={nextProfile} />
+          <p className="mt-3 text-center text-xs font-bold text-muted-foreground">
+            Dica: arraste as fotos para o lado dentro do card antes de decidir.
+          </p>
         </div>
       </section>
 
-      <section className="mt-8">
-        <SectionHeader eyebrow="Match social" title="Usuários populares agora" />
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {users.map((user) => (
-            <UserCard key={user.id} user={user} onProfile={setSelected} />
-          ))}
+      <section className="mt-8 grid gap-5 lg:grid-cols-[.7fr_1.3fr]">
+        <BeijoCheckFlow compact />
+        <div className="rounded-[1.8rem] border border-white/70 bg-white/80 p-5 shadow-[0_18px_50px_rgba(159,18,57,.08)]">
+          <p className="text-xs font-black uppercase tracking-[.24em] text-red-500">
+            Em alta agora
+          </p>
+          <h2 className="mt-1 text-3xl font-black">Pessoas no evento {activeEvent.name}</h2>
+          <div className="mt-4 grid gap-3 sm:grid-cols-3">
+            {users.slice(0, 3).map((user) => (
+              <button
+                key={user.id}
+                onClick={() => setSelected(user)}
+                className="rounded-3xl bg-red-50 p-3 text-left transition hover:-translate-y-1 hover:bg-red-100/70"
+              >
+                <img
+                  src={user.avatar}
+                  alt={user.name}
+                  className="h-28 w-full rounded-2xl object-cover"
+                />
+                <div className="mt-3 font-black">
+                  {user.name}, {user.age}
+                </div>
+                <div className="text-xs font-bold text-red-600">{user.localHighlight}</div>
+              </button>
+            ))}
+          </div>
         </div>
       </section>
       <ProfileModal user={selected} onOpenChange={(open) => !open && setSelected(null)} />
@@ -81,73 +113,99 @@ function ProfileModal({
   return (
     <Dialog open={!!user} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] overflow-y-auto rounded-[2rem] border-white/70 bg-white/95 p-0 shadow-[0_30px_100px_rgba(159,18,57,.35)]">
-        <>
-          {user && (
-            <>
-              <div className="relative h-64 overflow-hidden rounded-t-[2rem]">
-                <img src={user.avatar} alt={user.name} className="h-full w-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/75 to-transparent" />
-                <div className="absolute bottom-5 left-5 text-white">
-                  <span className="rounded-full bg-white/20 px-3 py-1 text-xs font-black backdrop-blur">
-                    {user.badge}
-                  </span>
-                  <DialogHeader className="mt-3 text-left">
-                    <DialogTitle className="text-4xl font-black">
-                      {user.name}, {user.age}
-                    </DialogTitle>
-                    <DialogDescription className="text-white/85">
-                      {user.city} · {user.event}
-                    </DialogDescription>
-                  </DialogHeader>
-                </div>
+        {user && (
+          <>
+            <div className="relative h-72 overflow-hidden rounded-t-[2rem]">
+              <img src={user.photos[0]} alt={user.name} className="h-full w-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+              <div className="absolute bottom-5 left-5 right-5 text-white">
+                <span className="rounded-full bg-white/20 px-3 py-1 text-xs font-black backdrop-blur">
+                  {user.badge}
+                </span>
+                <DialogHeader className="mt-3 text-left">
+                  <DialogTitle className="text-4xl font-black">
+                    {user.name}, {user.age}
+                  </DialogTitle>
+                  <DialogDescription className="text-white/85">
+                    {user.city} · {user.event} · {user.distance}
+                  </DialogDescription>
+                </DialogHeader>
               </div>
-              <div className="space-y-5 p-5">
-                <p className="text-muted-foreground">{user.bio}</p>
-                <div className="grid grid-cols-3 gap-3 text-center">
-                  {[
-                    { l: "Ranking", v: `#${user.rank}` },
-                    { l: "Beijos", v: user.kisses },
-                    { l: "Matches", v: user.matches },
-                  ].map((s) => (
-                    <div key={s.l} className="rounded-2xl bg-red-50 p-4">
-                      <div className="text-2xl font-black text-red-600">{s.v}</div>
-                      <div className="text-[10px] font-black uppercase tracking-wide text-muted-foreground">
-                        {s.l}
-                      </div>
+            </div>
+            <div className="space-y-5 p-5">
+              <p className="text-muted-foreground">{user.bio}</p>
+              <div className="grid grid-cols-3 gap-3 text-center">
+                {[
+                  { l: "Ranking", v: `#${user.rank}` },
+                  { l: "BeijoChecks", v: user.kisses },
+                  { l: "Matches", v: user.matches },
+                ].map((s) => (
+                  <div key={s.l} className="rounded-2xl bg-red-50 p-4">
+                    <div className="text-2xl font-black text-red-600">{s.v}</div>
+                    <div className="text-[10px] font-black uppercase tracking-wide text-muted-foreground">
+                      {s.l}
                     </div>
+                  </div>
+                ))}
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {user.interests.map((interest) => (
+                  <span
+                    key={interest}
+                    className="rounded-full bg-orange-50 px-3 py-1 text-sm font-bold text-orange-600"
+                  >
+                    {interest}
+                  </span>
+                ))}
+              </div>
+              <div className="rounded-3xl bg-red-50 p-4 text-sm font-bold text-red-700">
+                <ShieldCheck className="mr-2 inline h-4 w-4" /> Só vale com confirmação mútua. Você
+                pode ocultar seu perfil do ranking. Sem exposição indevida.
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                <Button className="rounded-full bg-gradient-lipstick font-black text-white">
+                  Interessar
+                </Button>
+                <Button
+                  variant="outline"
+                  className="rounded-full border-red-200 font-black text-red-600"
+                >
+                  BeijoCheck
+                </Button>
+                <Button
+                  variant="outline"
+                  className="rounded-full border-red-200 font-black text-red-600"
+                >
+                  Salvar
+                </Button>
+              </div>
+              <div className="flex flex-wrap gap-2 text-xs font-black text-muted-foreground">
+                <span className="rounded-full bg-white px-3 py-2">
+                  <Ban className="mr-1 inline h-4 w-4" /> Bloquear
+                </span>
+                <span className="rounded-full bg-white px-3 py-2">
+                  <Flag className="mr-1 inline h-4 w-4" /> Denunciar
+                </span>
+                <span className="rounded-full bg-white px-3 py-2">
+                  <EyeOff className="mr-1 inline h-4 w-4" /> Ocultar ranking
+                </span>
+              </div>
+              <div>
+                <h4 className="font-black">Eventos conectados</h4>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {events.slice(0, 3).map((e) => (
+                    <span
+                      key={e.id}
+                      className="rounded-full bg-red-50 px-3 py-1 text-sm font-bold text-red-600"
+                    >
+                      {e.name}
+                    </span>
                   ))}
                 </div>
-                <div>
-                  <h4 className="font-black">Eventos frequentados</h4>
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {events.slice(0, 3).map((e) => (
-                      <span
-                        key={e.id}
-                        className="rounded-full bg-orange-50 px-3 py-1 text-sm font-bold text-orange-600"
-                      >
-                        {e.name}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <h4 className="font-black">Badges</h4>
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {[user.badge, user.status, "Confirmação mútua"].map((b) => (
-                      <span
-                        key={b}
-                        className="rounded-full bg-red-50 px-3 py-1 text-sm font-bold text-red-600"
-                      >
-                        {b}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-                <MatchButton />
               </div>
-            </>
-          )}
-        </>
+            </div>
+          </>
+        )}
       </DialogContent>
     </Dialog>
   );

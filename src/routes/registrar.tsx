@@ -1,8 +1,10 @@
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
-import { SiteHeader } from "@/components/SiteHeader";
+import { AppShell } from "@/components/beijocheck/brand";
+import { BeijoCheckFlow, SafetyTrustBar } from "@/components/beijocheck/social";
+import { beijoCheckSteps, events, users } from "@/data/beijocheck.mock";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,13 +17,22 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Camera, MapPin } from "lucide-react";
+import {
+  Camera,
+  CheckCircle2,
+  Clock3,
+  HeartHandshake,
+  MapPin,
+  Send,
+  ShieldCheck,
+  UserRound,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { recordKiss } from "@/lib/kisses.functions";
 import { myParties } from "@/lib/parties.functions";
 
 export const Route = createFileRoute("/registrar")({
-  head: () => ({ meta: [{ title: "Registrar beijo — BeijoCheck" }] }),
+  head: () => ({ meta: [{ title: "Registrar BeijoCheck — BeijoCheck" }] }),
   component: Registrar,
 });
 
@@ -31,11 +42,12 @@ function Registrar() {
   const [userId, setUserId] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
-  const [city, setCity] = useState("");
-  const [partner, setPartner] = useState("");
+  const [city, setCity] = useState("Santa Rosa");
+  const [partner, setPartner] = useState(users[1].name);
   const [partyId, setPartyId] = useState<string>("");
   const [isPublic, setIsPublic] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [mockStatus, setMockStatus] = useState<"rascunho" | "aguardando">("rascunho");
 
   const recordFn = useServerFn(recordKiss);
   const partiesFn = useServerFn(myParties);
@@ -97,11 +109,11 @@ function Registrar() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!file || !userId) {
-      toast.error("Manda uma selfie 📸");
+      toast.error("Envie uma foto de contexto para validação 📸");
       return;
     }
     if (!city.trim()) {
-      toast.error("Qual a cidade?");
+      toast.error("Confirme a cidade");
       return;
     }
     setSubmitting(true);
@@ -121,8 +133,8 @@ function Registrar() {
           is_public: isPublic,
         },
       });
-      toast.success("Beijo registrado! 💋");
-      navigate({ to: "/perfil" });
+      setMockStatus("aguardando");
+      toast.success("Solicitação enviada. Aguardando confirmação mútua ✅");
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Erro");
     } finally {
@@ -133,109 +145,182 @@ function Registrar() {
   if (!authChecked) return null;
 
   return (
-    <div className="min-h-screen">
-      <SiteHeader />
-      <main className="max-w-lg mx-auto px-4 py-8">
-        <h1 className="text-4xl font-bold">Novo beijo 💋</h1>
-        <p className="text-muted-foreground mt-2">Manda a selfie. Sem ela não conta.</p>
-
-        <form onSubmit={submit} className="mt-8 space-y-6">
-          <div>
-            <Label className="font-semibold mb-2 block">Selfie do beijo *</Label>
-            <label className="relative block aspect-square rounded-3xl border-2 border-dashed border-primary/40 bg-card hover:border-primary cursor-pointer overflow-hidden transition-colors">
-              {preview ? (
-                <img src={preview} alt="" className="w-full h-full object-cover" />
+    <AppShell>
+      <section className="grid gap-5 lg:grid-cols-[.9fr_1.1fr]">
+        <div className="rounded-[2.1rem] bg-gradient-to-br from-red-600 via-rose-600 to-orange-400 p-6 text-white shadow-[0_28px_90px_rgba(225,29,72,.3)] sm:p-8">
+          <p className="text-xs font-black uppercase tracking-[.24em] text-white/70">
+            Registrar BeijoCheck
+          </p>
+          <h1 className="mt-2 text-5xl font-black leading-[.9] sm:text-6xl">
+            Um fluxo guiado, seguro e mútuo
+          </h1>
+          <p className="mt-4 text-white/85">
+            Registre o contexto, envie a solicitação e acompanhe o status. Só entra no ranking
+            quando a outra pessoa confirma.
+          </p>
+          <div className="mt-6 rounded-[1.5rem] bg-white/15 p-4 backdrop-blur">
+            <div className="flex items-center gap-3">
+              {mockStatus === "aguardando" ? (
+                <Clock3 className="h-8 w-8" />
               ) : (
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-muted-foreground">
-                  <Camera className="w-12 h-12 text-primary" />
-                  <span className="font-semibold">Toque para tirar/escolher</span>
-                </div>
+                <ShieldCheck className="h-8 w-8" />
               )}
-              <input
-                type="file"
-                accept="image/*"
-                capture="user"
-                onChange={onFile}
-                className="absolute inset-0 opacity-0 cursor-pointer"
-              />
-            </label>
-          </div>
-
-          <div>
-            <Label htmlFor="city" className="font-semibold mb-2 flex items-center gap-1">
-              <MapPin className="w-4 h-4" /> Cidade *
-            </Label>
-            <Input
-              id="city"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              placeholder="Ex: Rio de Janeiro"
-              className="rounded-2xl bg-card h-12"
-              required
-              maxLength={80}
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="party" className="font-semibold mb-2 block">
-              Festa (opcional)
-            </Label>
-            <Select
-              value={partyId || "none"}
-              onValueChange={(v) => setPartyId(v === "none" ? "" : v)}
-            >
-              <SelectTrigger className="rounded-2xl bg-card h-12">
-                <SelectValue placeholder="Sem festa" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="none">Sem festa</SelectItem>
-                {(parties?.parties ?? []).map((p) => (
-                  <SelectItem key={p.id} value={p.id}>
-                    {p.name} ({p.code})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <p className="text-xs text-muted-foreground mt-1">
-              Não tem?{" "}
-              <Link to="/festas" className="text-primary">
-                Criar ou entrar →
-              </Link>
-            </p>
-          </div>
-
-          <div>
-            <Label htmlFor="partner" className="font-semibold mb-2 block">
-              Apelido do par (opcional)
-            </Label>
-            <Input
-              id="partner"
-              value={partner}
-              onChange={(e) => setPartner(e.target.value)}
-              placeholder="Ex: gato da pista"
-              className="rounded-2xl bg-card h-12"
-              maxLength={40}
-            />
-          </div>
-
-          <div className="flex items-center justify-between rounded-2xl bg-card border border-border/60 p-4">
-            <div>
-              <div className="font-semibold">Foto pública</div>
-              <div className="text-xs text-muted-foreground">Por padrão, só você vê a selfie.</div>
+              <div>
+                <div className="font-black">
+                  {mockStatus === "aguardando" ? "Aguardando confirmação" : "Pronto para enviar"}
+                </div>
+                <div className="text-sm text-white/75">
+                  {mockStatus === "aguardando"
+                    ? "Quando confirmado, pontua no ranking."
+                    : "Sem exposição indevida e sem conteúdo explícito."}
+                </div>
+              </div>
             </div>
-            <Switch checked={isPublic} onCheckedChange={setIsPublic} />
+          </div>
+        </div>
+        <BeijoCheckFlow compact />
+      </section>
+
+      <section className="mt-8 grid gap-5 lg:grid-cols-[1fr_360px]">
+        <form
+          onSubmit={submit}
+          className="space-y-5 rounded-[2rem] border border-white/70 bg-white/82 p-5 shadow-[0_18px_50px_rgba(159,18,57,.08)] sm:p-6"
+        >
+          <StepTitle number="1" title="Selecionar pessoa ou evento" />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <Label htmlFor="partner" className="mb-2 flex items-center gap-1 font-semibold">
+                <UserRound className="h-4 w-4" /> Pessoa
+              </Label>
+              <Input
+                id="partner"
+                value={partner}
+                onChange={(e) => setPartner(e.target.value)}
+                placeholder="Nome ou apelido"
+                className="h-12 rounded-2xl bg-white"
+                maxLength={40}
+              />
+            </div>
+            <div>
+              <Label className="mb-2 block font-semibold">Evento</Label>
+              <Select value={partyId} onValueChange={setPartyId}>
+                <SelectTrigger className="h-12 rounded-2xl bg-white">
+                  <SelectValue placeholder={events[0].name} />
+                </SelectTrigger>
+                <SelectContent>
+                  {parties?.map((p) => (
+                    <SelectItem key={p.id} value={p.id}>
+                      {p.name}
+                    </SelectItem>
+                  ))}
+                  {events.map((event) => (
+                    <SelectItem key={`mock-${event.id}`} value={`mock-${event.id}`}>
+                      {event.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
+          <StepTitle number="2" title="Confirmar contexto" />
+          <div className="grid gap-4 sm:grid-cols-[1fr_220px]">
+            <div>
+              <Label htmlFor="city" className="mb-2 flex items-center gap-1 font-semibold">
+                <MapPin className="h-4 w-4" /> Cidade
+              </Label>
+              <Input
+                id="city"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                placeholder="Cidade"
+                className="h-12 rounded-2xl bg-white"
+              />
+            </div>
+            <div className="flex items-center justify-between rounded-2xl border border-red-100 bg-red-50 p-4">
+              <div>
+                <div className="font-semibold">Ocultar do ranking</div>
+                <div className="text-xs text-muted-foreground">Você controla a visibilidade.</div>
+              </div>
+              <Switch checked={!isPublic} onCheckedChange={(checked) => setIsPublic(!checked)} />
+            </div>
+          </div>
+
+          <StepTitle number="3" title="Adicionar foto de contexto" />
+          <label className="relative block aspect-[4/3] cursor-pointer overflow-hidden rounded-3xl border-2 border-dashed border-red-200 bg-red-50 transition-colors hover:border-red-400">
+            {preview ? (
+              <img src={preview} alt="Prévia do contexto" className="h-full w-full object-cover" />
+            ) : (
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-muted-foreground">
+                <Camera className="h-12 w-12 text-red-500" />
+                <span className="font-semibold">Toque para tirar ou escolher uma foto</span>
+                <span className="text-xs">
+                  Sem conteúdo explícito. Use apenas contexto permitido.
+                </span>
+              </div>
+            )}
+            <input
+              type="file"
+              accept="image/*"
+              capture="user"
+              onChange={onFile}
+              className="absolute inset-0 cursor-pointer opacity-0"
+            />
+          </label>
+
+          <StepTitle number="4" title="Enviar solicitação de confirmação" />
           <Button
             type="submit"
             disabled={submitting}
             size="lg"
-            className="w-full rounded-full bg-gradient-lipstick text-primary-foreground h-14 text-base font-bold"
+            className="h-14 w-full rounded-full bg-gradient-lipstick text-base font-black text-white"
           >
-            {submitting ? "Registrando..." : "Registrar beijo 💋"}
+            {submitting ? (
+              "Enviando..."
+            ) : (
+              <>
+                <Send className="mr-2 h-5 w-5" /> Enviar BeijoCheck para confirmação
+              </>
+            )}
           </Button>
         </form>
-      </main>
+
+        <aside className="space-y-5">
+          <SafetyTrustBar />
+          <div className="rounded-[1.8rem] border border-white/70 bg-white/82 p-5 shadow-[0_18px_50px_rgba(159,18,57,.08)]">
+            <p className="text-xs font-black uppercase tracking-[.24em] text-red-500">
+              Status visual
+            </p>
+            <div className="mt-4 space-y-3">
+              {beijoCheckSteps.map((step, index) => (
+                <div key={step.title} className="flex gap-3 rounded-2xl bg-red-50 p-3">
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-red-500" />
+                  <div>
+                    <div className="font-black">
+                      Etapa {index + 1}: {step.title}
+                    </div>
+                    <p className="text-xs text-muted-foreground">{step.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 rounded-2xl bg-orange-50 p-4 text-sm font-bold text-orange-700">
+              Status atual: aguardando confirmação da outra pessoa.
+            </div>
+          </div>
+        </aside>
+      </section>
+    </AppShell>
+  );
+}
+
+function StepTitle({ number, title }: { number: string; title: string }) {
+  return (
+    <div className="flex items-center gap-3 pt-2 first:pt-0">
+      <div className="grid h-9 w-9 place-items-center rounded-full bg-gradient-lipstick text-sm font-black text-white">
+        {number}
+      </div>
+      <h2 className="text-2xl font-black">{title}</h2>
     </div>
   );
 }

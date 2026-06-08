@@ -24,8 +24,19 @@ export const Route = createFileRoute("/perfil")({
 });
 
 function PerfilPage() {
+  const navigate = useNavigate();
   const user = users[0];
   const [avatar, setAvatar] = useState(user.avatar);
+  async function signOut() {
+    try {
+      await supabase.auth.signOut();
+    } catch {
+      /* noop */
+    }
+    toast.success("Você saiu da conta.");
+    navigate({ to: "/login", search: { signedout: 1 } as never });
+  }
+
   const [bio, setBio] = useState(user.bio);
   const [editingBio, setEditingBio] = useState(false);
   const [bioDraft, setBioDraft] = useState(bio);

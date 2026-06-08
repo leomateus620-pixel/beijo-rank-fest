@@ -14,7 +14,151 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      friendships: {
+        Row: {
+          created_at: string
+          friend_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          friend_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          friend_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      kisses: {
+        Row: {
+          city: string
+          created_at: string
+          id: string
+          is_public: boolean
+          partner_nickname: string | null
+          party_id: string | null
+          photo_path: string
+          user_id: string
+        }
+        Insert: {
+          city: string
+          created_at?: string
+          id?: string
+          is_public?: boolean
+          partner_nickname?: string | null
+          party_id?: string | null
+          photo_path: string
+          user_id: string
+        }
+        Update: {
+          city?: string
+          created_at?: string
+          id?: string
+          is_public?: boolean
+          partner_nickname?: string | null
+          party_id?: string | null
+          photo_path?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kisses_party_id_fkey"
+            columns: ["party_id"]
+            isOneToOne: false
+            referencedRelation: "parties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      parties: {
+        Row: {
+          city: string | null
+          code: string
+          created_at: string
+          created_by: string
+          ends_at: string | null
+          id: string
+          name: string
+          starts_at: string | null
+        }
+        Insert: {
+          city?: string | null
+          code: string
+          created_at?: string
+          created_by: string
+          ends_at?: string | null
+          id?: string
+          name: string
+          starts_at?: string | null
+        }
+        Update: {
+          city?: string | null
+          code?: string
+          created_at?: string
+          created_by?: string
+          ends_at?: string | null
+          id?: string
+          name?: string
+          starts_at?: string | null
+        }
+        Relationships: []
+      }
+      party_members: {
+        Row: {
+          joined_at: string
+          party_id: string
+          user_id: string
+        }
+        Insert: {
+          joined_at?: string
+          party_id: string
+          user_id: string
+        }
+        Update: {
+          joined_at?: string
+          party_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "party_members_party_id_fkey"
+            columns: ["party_id"]
+            isOneToOne: false
+            referencedRelation: "parties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          city: string | null
+          created_at: string
+          display_name: string
+          id: string
+          username: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          city?: string | null
+          created_at?: string
+          display_name: string
+          id: string
+          username: string
+        }
+        Update: {
+          avatar_url?: string | null
+          city?: string | null
+          created_at?: string
+          display_name?: string
+          id?: string
+          username?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

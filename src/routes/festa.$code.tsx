@@ -23,25 +23,58 @@ function FestaPage() {
   const joinFn = useServerFn(joinPartyByCode);
   const [joining, setJoining] = useState(false);
 
-  const { data: party } = useQuery({ queryKey: ["party", code], queryFn: () => getPartyFn({ data: { code } }) });
+  const { data: party } = useQuery({
+    queryKey: ["party", code],
+    queryFn: () => getPartyFn({ data: { code } }),
+  });
   const partyId = party?.party?.id;
-  const { data: rank } = useQuery({ queryKey: ["ranking", "party", partyId], queryFn: () => getRankFn({ data: { partyId: partyId! } }), enabled: !!partyId });
+  const { data: rank } = useQuery({
+    queryKey: ["ranking", "party", partyId],
+    queryFn: () => getRankFn({ data: { partyId: partyId! } }),
+    enabled: !!partyId,
+  });
 
   async function join() {
     setJoining(true);
-    try { await joinFn({ data: { code } }); toast.success("Você entrou!"); navigate({ to: "/registrar" }); }
-    catch (e) { toast.error(e instanceof Error ? e.message : "Erro"); }
-    finally { setJoining(false); }
+    try {
+      await joinFn({ data: { code } });
+      toast.success("Você entrou!");
+      navigate({ to: "/registrar" });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erro");
+    } finally {
+      setJoining(false);
+    }
   }
 
   function share() {
     const url = window.location.href;
-    if (navigator.share) navigator.share({ title: `BeijoCheck — ${party?.party?.name}`, text: `Bora pra ${party?.party?.name} e disputar o ranking 💋 Código: ${code}`, url }).catch(() => {});
-    else { navigator.clipboard.writeText(url); toast.success("Link copiado!"); }
+    if (navigator.share)
+      navigator
+        .share({
+          title: `BeijoCheck — ${party?.party?.name}`,
+          text: `Bora pra ${party?.party?.name} e disputar o ranking 💋 Código: ${code}`,
+          url,
+        })
+        .catch(() => {});
+    else {
+      navigator.clipboard.writeText(url);
+      toast.success("Link copiado!");
+    }
   }
 
   if (party && !party.party) {
-    return <div className="min-h-screen"><SiteHeader /><div className="text-center py-20"><p className="text-2xl">Festa não encontrada 😢</p><Link to="/festas" className="text-primary mt-4 inline-block">← Voltar</Link></div></div>;
+    return (
+      <div className="min-h-screen">
+        <SiteHeader />
+        <div className="text-center py-20">
+          <p className="text-2xl">Festa não encontrada 😢</p>
+          <Link to="/festas" className="text-primary mt-4 inline-block">
+            ← Voltar
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -64,13 +97,31 @@ function FestaPage() {
 
         <h2 className="text-2xl font-bold mb-4">Ranking da festa 🏆</h2>
         {!rank?.rows.length ? (
-          <p className="text-muted-foreground py-8 text-center">Ninguém beijou aqui ainda. <Link to="/registrar" className="text-primary font-semibold">Inaugura aí 💋</Link></p>
+          <p className="text-muted-foreground py-8 text-center">
+            Ninguém beijou aqui ainda.{" "}
+            <Link to="/registrar" className="text-primary font-semibold">
+              Inaugura aí 💋
+            </Link>
+          </p>
         ) : (
           <ol className="rounded-3xl bg-card border border-border/60 overflow-hidden">
             {rank.rows.map((r, i) => (
-              <li key={r.user_id} className="flex items-center gap-4 p-4 border-b border-border/40 last:border-0">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${i < 3 ? "bg-gradient-lipstick text-primary-foreground" : "bg-secondary"}`}>{i + 1}</div>
-                {r.avatar_url ? <img src={r.avatar_url} alt="" className="w-10 h-10 rounded-full object-cover" /> : <div className="w-10 h-10 rounded-full bg-blush flex items-center justify-center">💋</div>}
+              <li
+                key={r.user_id}
+                className="flex items-center gap-4 p-4 border-b border-border/40 last:border-0"
+              >
+                <div
+                  className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${i < 3 ? "bg-gradient-lipstick text-primary-foreground" : "bg-secondary"}`}
+                >
+                  {i + 1}
+                </div>
+                {r.avatar_url ? (
+                  <img src={r.avatar_url} alt="" className="w-10 h-10 rounded-full object-cover" />
+                ) : (
+                  <div className="w-10 h-10 rounded-full bg-blush flex items-center justify-center">
+                    💋
+                  </div>
+                )}
                 <div className="flex-1 min-w-0">
                   <div className="font-semibold truncate">{r.display_name}</div>
                   <div className="text-xs text-muted-foreground truncate">@{r.username}</div>

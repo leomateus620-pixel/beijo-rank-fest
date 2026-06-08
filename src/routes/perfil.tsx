@@ -1,93 +1,121 @@
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { useServerFn } from "@tanstack/react-start";
-import { useQuery } from "@tanstack/react-query";
-import { SiteHeader } from "@/components/SiteHeader";
+import { createFileRoute } from "@tanstack/react-router";
+import { Area, AreaChart, ResponsiveContainer, Tooltip } from "recharts";
+import { AppShell, EventCard, MatchButton, SectionHeader } from "@/components/beijocheck/brand";
+import { events, users, weeklyEvolution } from "@/data/beijocheck.mock";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
 import { Share2 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { myStats } from "@/lib/kisses.functions";
 
 export const Route = createFileRoute("/perfil")({
-  head: () => ({ meta: [{ title: "Meu perfil — BeijoCheck" }] }),
+  head: () => ({ meta: [{ title: "Perfil — BeijoCheck" }] }),
   component: PerfilPage,
 });
 
 function PerfilPage() {
-  const navigate = useNavigate();
-  const [profile, setProfile] = useState<{ display_name: string; username: string; avatar_url: string | null; city: string | null } | null>(null);
-  const statsFn = useServerFn(myStats);
-
-  useEffect(() => {
-    supabase.auth.getSession().then(async ({ data }) => {
-      if (!data.session) { navigate({ to: "/auth", replace: true }); return; }
-      const { data: p } = await supabase.from("profiles").select("display_name, username, avatar_url, city").eq("id", data.session.user.id).maybeSingle();
-      if (p) setProfile(p);
-    });
-  }, [navigate]);
-
-  const { data: stats } = useQuery({ queryKey: ["my-stats"], queryFn: () => statsFn(), enabled: !!profile });
-
-  function shareCard() {
-    if (!profile || !stats) return;
-    const text = `💋 BeijoCheck\n@${profile.username} já beijou ${stats.total} ${stats.total === 1 ? "pessoa" : "pessoas"} em ${stats.cities} ${stats.cities === 1 ? "cidade" : "cidades"}!\n\nEntra você também:`;
-    const url = window.location.origin;
-    if (navigator.share) navigator.share({ title: "Meu BeijoCard", text, url }).catch(() => {});
-    else { navigator.clipboard.writeText(`${text} ${url}`); toast.success("Copiado!"); }
-  }
-
-  if (!profile) return null;
-
+  const user = users[0];
   return (
-    <div className="min-h-screen">
-      <SiteHeader />
-      <main className="max-w-xl mx-auto px-4 py-8">
-        <div className="rounded-3xl bg-gradient-lipstick text-primary-foreground p-8 text-center">
-          {profile.avatar_url ? (
-            <img src={profile.avatar_url} alt="" className="w-24 h-24 rounded-full mx-auto object-cover border-4 border-white/40" />
-          ) : (
-            <div className="w-24 h-24 rounded-full bg-white/30 mx-auto flex items-center justify-center text-4xl">💋</div>
-          )}
-          <h1 className="text-3xl font-bold mt-4">{profile.display_name}</h1>
-          <p className="opacity-90">@{profile.username}</p>
-
-          <div className="grid grid-cols-3 gap-4 mt-8">
+    <AppShell>
+      <section className="grid gap-5 lg:grid-cols-[.75fr_1.25fr]">
+        <div className="overflow-hidden rounded-[2.1rem] border border-white/70 bg-white/80 shadow-[0_18px_50px_rgba(159,18,57,.09)]">
+          <div className="h-36 bg-gradient-to-br from-red-600 via-rose-600 to-orange-400" />
+          <div className="-mt-16 p-6 text-center">
+            <img
+              src={user.avatar}
+              alt={user.name}
+              className="mx-auto h-32 w-32 rounded-[2rem] border-4 border-white object-cover shadow-xl"
+            />
+            <h1 className="mt-4 text-4xl font-black">
+              {user.name}, {user.age}
+            </h1>
+            <p className="text-muted-foreground">@lara · {user.city}</p>
+            <p className="mt-4 text-sm text-muted-foreground">{user.bio}</p>
+            <div className="mt-5 grid grid-cols-3 gap-3">
+              {[
+                { l: "Ranking", v: `#${user.rank}` },
+                { l: "Beijos", v: user.kisses },
+                { l: "Matches", v: user.matches },
+              ].map((s) => (
+                <div key={s.l} className="rounded-2xl bg-red-50 p-3">
+                  <div className="text-2xl font-black text-red-600">{s.v}</div>
+                  <div className="text-[10px] font-black uppercase tracking-wide text-muted-foreground">
+                    {s.l}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-5 flex gap-2">
+              <Button className="flex-1 rounded-full bg-gradient-lipstick font-black text-white">
+                <Share2 className="mr-1 h-4 w-4" />
+                BeijoCard
+              </Button>
+              <MatchButton />
+            </div>
+          </div>
+        </div>
+        <div className="space-y-5">
+          <div className="rounded-[2.1rem] border border-white/70 bg-white/80 p-5 shadow-[0_18px_50px_rgba(159,18,57,.08)]">
+            <SectionHeader eyebrow="Evolução semanal" title="Performance no ranking" />
+            <ResponsiveContainer width="100%" height={250}>
+              <AreaChart data={weeklyEvolution}>
+                <defs>
+                  <linearGradient id="perfil" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#e11d48" stopOpacity={0.55} />
+                    <stop offset="95%" stopColor="#fb923c" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <Tooltip />
+                <Area dataKey="beijos" stroke="#e11d48" strokeWidth={3} fill="url(#perfil)" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Info title="Posição na cidade" value="#1 Santa Rosa" desc="+18% em relação a ontem" />
+            <Info
+              title="Posição regional"
+              value="#1 Noroeste"
+              desc="Liderança mantida por 4 dias"
+            />
+          </div>
+        </div>
+      </section>
+      <section className="mt-8 grid gap-5 lg:grid-cols-2">
+        <div>
+          <SectionHeader eyebrow="Badges" title="Conquistas" />
+          <div className="grid gap-3 sm:grid-cols-2">
             {[
-              { label: "Beijos", v: stats?.total ?? 0 },
-              { label: "Cidades", v: stats?.cities ?? 0 },
-              { label: "Festas", v: stats?.parties ?? 0 },
-            ].map((s) => (
-              <div key={s.label}>
-                <div className="text-4xl font-black">{s.v}</div>
-                <div className="text-xs opacity-80 uppercase tracking-wide">{s.label}</div>
+              user.badge,
+              user.status,
+              "Campeã da semana",
+              "Confirmação mútua",
+              "Evento em alta",
+              "Top social",
+            ].map((b) => (
+              <div
+                key={b}
+                className="rounded-3xl border border-white/70 bg-white/80 p-4 font-black text-red-600 shadow-sm"
+              >
+                🏅 {b}
               </div>
             ))}
           </div>
-          <Button onClick={shareCard} variant="secondary" className="rounded-full mt-8">
-            <Share2 className="w-4 h-4 mr-1" /> Compartilhar BeijoCard
-          </Button>
         </div>
-
-        <div className="mt-8">
-          <h2 className="text-xl font-bold mb-3">Histórico</h2>
-          {(stats?.recent ?? []).length === 0 ? (
-            <p className="text-muted-foreground text-center py-8">Sem beijos ainda. <Link to="/registrar" className="text-primary font-semibold">Bora começar 💋</Link></p>
-          ) : (
-            <ul className="space-y-2">
-              {stats!.recent.map((k) => (
-                <li key={k.id} className="rounded-2xl bg-card border border-border/60 p-4">
-                  <div className="flex justify-between">
-                    <div className="font-semibold">{k.partner_nickname || "Anônimo(a)"}</div>
-                    <div className="text-xs text-muted-foreground">{new Date(k.created_at).toLocaleDateString("pt-BR")}</div>
-                  </div>
-                  <div className="text-sm text-muted-foreground">{k.city}</div>
-                </li>
-              ))}
-            </ul>
-          )}
+        <div>
+          <SectionHeader eyebrow="Eventos" title="Frequentados" />
+          <div className="grid gap-4 sm:grid-cols-2">
+            {events.slice(0, 2).map((event) => (
+              <EventCard key={event.id} event={event} />
+            ))}
+          </div>
         </div>
-      </main>
+      </section>
+    </AppShell>
+  );
+}
+function Info({ title, value, desc }: { title: string; value: string; desc: string }) {
+  return (
+    <div className="rounded-[1.8rem] border border-white/70 bg-white/80 p-5 shadow-[0_18px_50px_rgba(159,18,57,.08)]">
+      <p className="text-sm font-bold text-muted-foreground">{title}</p>
+      <h3 className="mt-2 text-3xl font-black text-red-600">{value}</h3>
+      <p className="mt-1 text-sm text-green-600">{desc}</p>
     </div>
   );
 }

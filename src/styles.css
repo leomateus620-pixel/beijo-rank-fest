@@ -85,7 +85,9 @@
 }
 
 @layer base {
-  * { border-color: var(--color-border); }
+  * {
+    border-color: var(--color-border);
+  }
   body {
     background:
       radial-gradient(ellipse 80% 60% at 20% 0%, oklch(0.93 0.08 355 / 0.6), transparent),
@@ -95,7 +97,12 @@
     font-family: var(--font-sans);
     min-height: 100vh;
   }
-  h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.02em; }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
 }
 
 @layer utilities {
@@ -109,8 +116,15 @@
     background: linear-gradient(135deg, var(--lipstick), var(--cherry));
   }
   @keyframes kiss-pop {
-    0%, 100% { transform: scale(1) rotate(-4deg); }
-    50% { transform: scale(1.15) rotate(4deg); }
+    0%,
+    100% {
+      transform: scale(1) rotate(-4deg);
+    }
+    50% {
+      transform: scale(1.15) rotate(4deg);
+    }
   }
-  .animate-kiss { animation: kiss-pop 2.4s ease-in-out infinite; }
+  .animate-kiss {
+    animation: kiss-pop 2.4s ease-in-out infinite;
+  }
 }

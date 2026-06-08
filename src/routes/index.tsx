@@ -79,9 +79,10 @@ function IndexPage() {
       </section>
 
       <section className="mt-4 grid min-w-0 gap-4 lg:grid-cols-[.85fr_1.15fr]">
-        <Link to="/eventos" className="tap-press block min-w-0">
+        <div className="min-w-0">
           <EventLiveCard event={activeEvent} />
-        </Link>
+        </div>
+
         <article className="card-3d hover-lift min-w-0 p-4 sm:p-5">
           <div className="mb-4 flex items-center justify-between gap-3">
             <div className="min-w-0">

@@ -1,9 +1,10 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import {
   Bell,
   Filter,
   Flame,
   HeartHandshake,
+  LogOut,
   MapPin,
   Search,
   SlidersHorizontal,
@@ -16,10 +17,21 @@ import {
   Medal,
   User,
 } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
 import type { BeijoUser } from "@/data/beijocheck.mock";
 import { events, users } from "@/data/beijocheck.mock";
+
 
 export function BeijoLogo({ compact = false }: { compact?: boolean }) {
   return (
@@ -36,6 +48,57 @@ export function BeijoLogo({ compact = false }: { compact?: boolean }) {
     </Link>
   );
 }
+
+export function UserMenu() {
+  const navigate = useNavigate();
+  async function handleSignOut() {
+    try {
+      await supabase.auth.signOut();
+    } catch {
+      /* ignore — still send to login */
+    }
+    toast.success("Você saiu da conta.");
+    navigate({ to: "/login", search: { signedout: 1 } as never });
+  }
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          type="button"
+          aria-label="Conta"
+          className="flex items-center gap-2 rounded-full border border-white/80 bg-white/70 py-1 pl-1 pr-1 shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg sm:pr-3"
+        >
+          <img
+            src={users[0].avatar}
+            alt="Lara"
+            className="h-9 w-9 rounded-full object-cover"
+          />
+          <div className="hidden text-left text-xs sm:block">
+            <div className="font-black leading-tight">Lara</div>
+            <div className="text-muted-foreground">#1 Santa Rosa</div>
+          </div>
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-52">
+        <DropdownMenuLabel>Minha conta</DropdownMenuLabel>
+        <DropdownMenuItem asChild>
+          <Link to="/perfil" className="cursor-pointer">
+            <UserRound className="mr-2 h-4 w-4" /> Meu perfil
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onSelect={handleSignOut}
+          className="cursor-pointer text-red-600 focus:text-red-700"
+        >
+          <LogOut className="mr-2 h-4 w-4" /> Sair da conta
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+
 
 const navItems = [
   { label: "Home", to: "/", icon: Home },
@@ -77,13 +140,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <button className="grid h-10 w-10 place-items-center rounded-full border border-white/70 bg-white/70 text-red-600 shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg">
               <Filter className="h-4 w-4" />
             </button>
-            <div className="hidden items-center gap-2 rounded-full border border-white/80 bg-white/70 py-1 pl-1 pr-3 shadow-sm sm:flex">
-              <img src={users[0].avatar} alt="Lara" className="h-9 w-9 rounded-full object-cover" />
-              <div className="text-xs">
-                <div className="font-black">Lara</div>
-                <div className="text-muted-foreground">#1 Santa Rosa</div>
-              </div>
-            </div>
+            <UserMenu />
+
           </div>
         </div>
       </header>

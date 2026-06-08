@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import {
   Area,
@@ -9,11 +9,14 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { toast } from "sonner";
 import { AppShell, EventCard, MatchButton, SectionHeader } from "@/components/beijocheck/brand";
 import { events, users, weeklyEvolution } from "@/data/beijocheck.mock";
 import { Button } from "@/components/ui/button";
 import { ShareProfileRankingActions } from "@/components/beijocheck/share";
-import { Camera, Check, Medal, Pencil, Trophy } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { Camera, Check, LogOut, Medal, Pencil, Trophy } from "lucide-react";
+
 
 export const Route = createFileRoute("/perfil")({
   head: () => ({ meta: [{ title: "Perfil — BeijoCheck" }] }),
@@ -21,8 +24,19 @@ export const Route = createFileRoute("/perfil")({
 });
 
 function PerfilPage() {
+  const navigate = useNavigate();
   const user = users[0];
   const [avatar, setAvatar] = useState(user.avatar);
+  async function signOut() {
+    try {
+      await supabase.auth.signOut();
+    } catch {
+      /* noop */
+    }
+    toast.success("Você saiu da conta.");
+    navigate({ to: "/login", search: { signedout: 1 } as never });
+  }
+
   const [bio, setBio] = useState(user.bio);
   const [editingBio, setEditingBio] = useState(false);
   const [bioDraft, setBioDraft] = useState(bio);
@@ -223,7 +237,27 @@ function PerfilPage() {
           </div>
         </div>
       </section>
+
+      <section className="mt-8">
+        <SectionHeader eyebrow="Conta" title="Configurações" />
+        <article className="card-3d flex flex-col items-start justify-between gap-3 p-5 sm:flex-row sm:items-center">
+          <div className="min-w-0">
+            <p className="font-black text-red-950">Sair da conta</p>
+            <p className="text-sm font-semibold text-muted-foreground">
+              Encerrar esta sessão e voltar para a tela de login.
+            </p>
+          </div>
+          <Button
+            onClick={signOut}
+            variant="outline"
+            className="rounded-full border-red-200 bg-white font-black text-red-600 hover:bg-red-50"
+          >
+            <LogOut className="mr-2 h-4 w-4" /> Sair
+          </Button>
+        </article>
+      </section>
     </AppShell>
+
   );
 }
 

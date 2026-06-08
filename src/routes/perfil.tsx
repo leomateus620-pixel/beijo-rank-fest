@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import {
   Area,
@@ -9,11 +9,14 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { toast } from "sonner";
 import { AppShell, EventCard, MatchButton, SectionHeader } from "@/components/beijocheck/brand";
 import { events, users, weeklyEvolution } from "@/data/beijocheck.mock";
 import { Button } from "@/components/ui/button";
 import { ShareProfileRankingActions } from "@/components/beijocheck/share";
-import { Camera, Check, Medal, Pencil, Trophy } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { Camera, Check, LogOut, Medal, Pencil, Trophy } from "lucide-react";
+
 
 export const Route = createFileRoute("/perfil")({
   head: () => ({ meta: [{ title: "Perfil — BeijoCheck" }] }),

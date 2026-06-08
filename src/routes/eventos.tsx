@@ -1,7 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppShell, EventCard, RankingList, SectionHeader } from "@/components/beijocheck/brand";
+import { EventLiveCard } from "@/components/beijocheck/social";
+import { activeEvent, events, users } from "@/data/beijocheck.mock";
 import { Button } from "@/components/ui/button";
-import { events, users } from "@/data/beijocheck.mock";
+import { CalendarDays, MapPin, Radio, Trophy, Users } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/eventos")({
   head: () => ({ meta: [{ title: "Eventos — BeijoCheck" }] }),
@@ -9,77 +12,137 @@ export const Route = createFileRoute("/eventos")({
 });
 
 export default function EventosPage() {
-  const event = events[0];
   return (
     <AppShell>
-      <section
-        className={`relative overflow-hidden rounded-[2.2rem] bg-gradient-to-br ${event.gradient} p-6 text-white shadow-[0_28px_90px_rgba(225,29,72,.34)] sm:p-8`}
-      >
-        <div className="absolute -right-20 -top-20 h-72 w-72 rounded-full bg-white/20 blur-3xl" />
-        <div className="relative max-w-3xl">
-          <span className="rounded-full bg-white/20 px-4 py-2 text-sm font-black backdrop-blur">
-            Evento em destaque · {event.ranking}
-          </span>
-          <h1 className="mt-6 text-5xl font-black sm:text-7xl">{event.name}</h1>
-          <p className="mt-3 text-lg text-white/85">
-            {event.city} · {event.date} · {event.vibe}
+      <section className="grid gap-5 lg:grid-cols-[1.1fr_.9fr]">
+        <EventLiveCard event={activeEvent} />
+        <div className="rounded-[2rem] border border-white/70 bg-white/80 p-5 shadow-[0_18px_50px_rgba(159,18,57,.08)]">
+          <p className="text-xs font-black uppercase tracking-[.24em] text-red-500">
+            Viralização local
           </p>
-          <div className="mt-7 grid max-w-2xl grid-cols-2 gap-3 sm:grid-cols-4">
-            {[
-              { l: "Beijos registrados", v: event.kisses },
-              { l: "Usuários ativos", v: event.activeUsers },
-              { l: "Ranking interno", v: "#1" },
-              { l: "Cidade", v: event.city },
-            ].map((s) => (
-              <div key={s.l} className="rounded-3xl bg-white/18 p-4 backdrop-blur">
-                <div className="text-2xl font-black">{s.v}</div>
-                <div className="text-xs font-bold uppercase tracking-wide text-white/75">{s.l}</div>
-              </div>
-            ))}
-          </div>
-          <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-            <Button className="h-12 rounded-full bg-white px-6 font-black text-red-600 hover:bg-white/90">
-              Participar do evento
-            </Button>
-            <Button
-              asChild
-              className="h-12 rounded-full border border-white/40 bg-white/15 px-6 font-black text-white backdrop-blur hover:bg-white/25"
-            >
-              <Link to="/registrar">Registrar beijo</Link>
-            </Button>
+          <h1 className="mt-2 text-4xl font-black">Eventos movimentam o ranking</h1>
+          <p className="mt-3 text-muted-foreground">
+            Entre no evento, explore perfis presentes e acompanhe o ranking ao vivo com BeijoChecks
+            confirmados por consentimento mútuo.
+          </p>
+          <div className="mt-5 grid grid-cols-2 gap-3">
+            <Info icon={Users} label="Participantes" value={activeEvent.participants} />
+            <Info icon={Trophy} label="Ranking" value={activeEvent.ranking} />
+            <Info icon={MapPin} label="Cidade" value={activeEvent.city} />
+            <Info icon={Radio} label="Status" value="Ao vivo" />
           </div>
         </div>
       </section>
-      <section className="mt-8 grid gap-5 lg:grid-cols-[.8fr_1.2fr]">
-        <RankingList title="Ranking interno" items={users.slice(0, 5)} />
+
+      <section className="mt-8 grid gap-5 lg:grid-cols-[.9fr_1.1fr]">
+        <RankingList title="Ranking do evento" items={users.slice(0, 5)} />
         <div>
-          <SectionHeader eyebrow="Destaques" title="Cards do evento" />
+          <SectionHeader eyebrow="Destaques" title="Quem está movimentando a pista" />
           <div className="grid gap-4 sm:grid-cols-2">
             {users.slice(0, 2).map((u, i) => (
               <div
                 key={u.id}
                 className="rounded-[1.8rem] border border-white/70 bg-white/80 p-5 shadow-[0_18px_50px_rgba(159,18,57,.08)]"
               >
-                <img src={u.avatar} alt={u.name} className="h-20 w-20 rounded-3xl object-cover" />
+                <img src={u.avatar} alt={u.name} className="h-24 w-24 rounded-3xl object-cover" />
                 <h3 className="mt-4 text-2xl font-black">
-                  {i === 0 ? "Rainha da pista" : "Rising do evento"}
+                  {i === 0 ? "Destaque da pista" : "Rising do evento"}
                 </h3>
                 <p className="text-muted-foreground">
-                  {u.name} · {u.kisses} confirmações · {u.badge}
+                  {u.name} · {u.kisses} BeijoChecks · {u.badge}
                 </p>
+                <Button
+                  asChild
+                  className="mt-4 rounded-full bg-gradient-lipstick font-black text-white"
+                >
+                  <Link to="/explorar">Explorar perfil</Link>
+                </Button>
               </div>
             ))}
           </div>
         </div>
       </section>
+
       <section className="mt-10">
-        <SectionHeader eyebrow="Agenda" title="Eventos em alta" />
+        <SectionHeader
+          eyebrow="Agenda"
+          title="Eventos em alta, próximos e encerrados"
+          action="Criar alerta"
+        />
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {events.map((e) => (
-            <EventCard key={e.id} event={e} />
+          {events.map((event) => (
+            <EventStatusCard key={event.id} event={event} />
           ))}
         </div>
       </section>
     </AppShell>
+  );
+}
+
+function EventStatusCard({ event }: { event: (typeof events)[number] }) {
+  return (
+    <article className="overflow-hidden rounded-[1.8rem] border border-white/70 bg-white/82 shadow-[0_18px_50px_rgba(159,18,57,.09)] transition hover:-translate-y-1">
+      <div className={cn("relative min-h-40 bg-gradient-to-br p-5 text-white", event.gradient)}>
+        <span className="absolute right-4 top-4 rounded-full bg-white/20 px-3 py-1 text-xs font-black backdrop-blur">
+          {event.status}
+        </span>
+        <CalendarDays className="h-8 w-8" />
+        <h3 className="mt-8 text-3xl font-black">{event.name}</h3>
+        <p className="font-semibold text-white/85">
+          {event.venue} · {event.city}
+        </p>
+      </div>
+      <div className="space-y-4 p-5">
+        <div className="grid grid-cols-2 gap-3">
+          <Mini label="Data" value={event.date} />
+          <Mini label="Participantes" value={event.participants} />
+          <Mini label="BeijoChecks" value={event.kisses} />
+          <Mini label="Ranking" value={event.livePosition} />
+        </div>
+        <div className="grid gap-2 sm:grid-cols-2">
+          <Button className="rounded-full bg-gradient-lipstick font-black text-white">
+            Entrar no evento
+          </Button>
+          <Button
+            asChild
+            variant="outline"
+            className="rounded-full border-red-200 font-black text-red-600"
+          >
+            <Link to="/ranking">Ver ranking ao vivo</Link>
+          </Button>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function Info({
+  icon: Icon,
+  label,
+  value,
+}: {
+  icon: typeof Users;
+  label: string;
+  value: string | number;
+}) {
+  return (
+    <div className="rounded-3xl bg-red-50 p-4">
+      <Icon className="h-5 w-5 text-red-500" />
+      <div className="mt-3 text-2xl font-black text-red-600">{value}</div>
+      <div className="text-[10px] font-black uppercase tracking-wide text-muted-foreground">
+        {label}
+      </div>
+    </div>
+  );
+}
+
+function Mini({ label, value }: { label: string; value: string | number }) {
+  return (
+    <div className="rounded-2xl bg-red-50/70 p-3">
+      <div className="text-lg font-black text-red-600">{value}</div>
+      <div className="text-[10px] font-black uppercase tracking-wide text-muted-foreground">
+        {label}
+      </div>
+    </div>
   );
 }

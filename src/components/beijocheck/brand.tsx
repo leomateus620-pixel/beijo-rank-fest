@@ -38,7 +38,7 @@ export function BeijoLogo({ compact = false }: { compact?: boolean }) {
 }
 
 const navItems = [
-  { label: "Dashboard", to: "/", icon: Home },
+  { label: "Home", to: "/", icon: Home },
   { label: "Explorar", to: "/explorar", icon: Compass },
   { label: "Ranking", to: "/ranking", icon: Medal },
   { label: "Eventos", to: "/eventos", icon: CalendarDays },
@@ -294,7 +294,7 @@ export function UserCard({
       </div>
       <div className="space-y-4 p-4">
         <div className="grid grid-cols-3 gap-2 text-center">
-          <Stat label="Beijos" value={user.kisses} />
+          <Stat label="BeijoChecks" value={user.kisses} />
           <Stat label="Pontos" value={user.points} />
           <Stat label="Match" value={user.matches} />
         </div>
@@ -331,11 +331,11 @@ export function EventCard({ event }: { event: (typeof events)[number] }) {
         <div className="grid grid-cols-2 gap-3">
           <Stat label="Cidade" value={event.city} />
           <Stat label="Data" value={event.date} />
-          <Stat label="Beijos" value={event.kisses} />
+          <Stat label="BeijoChecks" value={event.kisses} />
           <Stat label="Ativos" value={event.activeUsers} />
         </div>
         <Button className="w-full rounded-full bg-gradient-lipstick font-black text-white">
-          Ver evento
+          Entrar no evento
         </Button>
       </div>
     </article>
@@ -356,7 +356,7 @@ export function MatchButton() {
   return (
     <Button className="flex-1 rounded-full bg-gradient-lipstick font-black text-white shadow-lg shadow-red-500/20 transition active:scale-95">
       <HeartHandshake className="mr-1 h-4 w-4" />
-      Dar match
+      Interessar
     </Button>
   );
 }

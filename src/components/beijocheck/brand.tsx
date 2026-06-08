@@ -49,6 +49,57 @@ export function BeijoLogo({ compact = false }: { compact?: boolean }) {
   );
 }
 
+export function UserMenu() {
+  const navigate = useNavigate();
+  async function handleSignOut() {
+    try {
+      await supabase.auth.signOut();
+    } catch {
+      /* ignore — still send to login */
+    }
+    toast.success("Você saiu da conta.");
+    navigate({ to: "/login", search: { signedout: 1 } as never });
+  }
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          type="button"
+          aria-label="Conta"
+          className="flex items-center gap-2 rounded-full border border-white/80 bg-white/70 py-1 pl-1 pr-1 shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg sm:pr-3"
+        >
+          <img
+            src={users[0].avatar}
+            alt="Lara"
+            className="h-9 w-9 rounded-full object-cover"
+          />
+          <div className="hidden text-left text-xs sm:block">
+            <div className="font-black leading-tight">Lara</div>
+            <div className="text-muted-foreground">#1 Santa Rosa</div>
+          </div>
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-52">
+        <DropdownMenuLabel>Minha conta</DropdownMenuLabel>
+        <DropdownMenuItem asChild>
+          <Link to="/perfil" className="cursor-pointer">
+            <UserRound className="mr-2 h-4 w-4" /> Meu perfil
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onSelect={handleSignOut}
+          className="cursor-pointer text-red-600 focus:text-red-700"
+        >
+          <LogOut className="mr-2 h-4 w-4" /> Sair da conta
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+
+
 const navItems = [
   { label: "Home", to: "/", icon: Home },
   { label: "Explorar", to: "/explorar", icon: Compass },

@@ -87,7 +87,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         </div>
       </header>
-      <main className="mx-auto w-full max-w-7xl min-w-0 overflow-x-hidden px-3 py-5 sm:px-4 sm:py-8">
+      <main className="relative z-10 mx-auto w-full max-w-7xl min-w-0 overflow-x-hidden px-3 py-4 sm:px-4 sm:py-7">
         {children}
       </main>
       <BottomNavigation />
@@ -99,18 +99,18 @@ export function BottomNavigation() {
   return (
     <nav
       aria-label="Navegação principal"
-      className="bottom-safe-nav fixed inset-x-2 z-50 mx-auto max-w-[min(34rem,calc(100vw-1rem))] overflow-hidden rounded-[2rem] border border-white/55 bg-white/62 p-1.5 shadow-[0_24px_80px_rgba(159,18,57,.28),inset_0_1px_0_rgba(255,255,255,.78)] backdrop-blur-[28px] supports-[backdrop-filter]:bg-white/48 lg:hidden"
+      className="bottom-safe-nav fixed inset-x-2 z-50 mx-auto max-w-[min(33rem,calc(100vw-1rem))] overflow-hidden rounded-[1.65rem] border border-white/60 bg-white/58 p-1.5 shadow-[0_18px_60px_rgba(159,18,57,.2),inset_0_1px_0_rgba(255,255,255,.82)] backdrop-blur-[30px] supports-[backdrop-filter]:bg-white/46 lg:hidden"
     >
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,.65),rgba(255,255,255,.12)_45%,rgba(251,146,60,.18))]" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,.68),rgba(255,255,255,.14)_45%,rgba(251,146,60,.12))]" />
       <div className="scrollbar-hide relative flex min-w-0 snap-x snap-mandatory gap-1 overflow-x-auto overscroll-x-contain scroll-smooth px-0.5">
         {navItems.map(({ label, to, icon: Icon }) => (
           <Link
             key={to}
             to={to}
-            className="flex min-w-[4.15rem] shrink-0 snap-center flex-col items-center justify-center gap-1 rounded-[1.35rem] px-2 py-2 text-[10px] font-black text-red-950/58 transition-all duration-300 hover:bg-white/50 hover:text-red-600 active:scale-95"
+            className="flex min-w-[4rem] shrink-0 snap-center flex-col items-center justify-center gap-1 rounded-[1.2rem] px-2 py-2 text-[10px] font-black text-red-950/58 transition-all duration-300 hover:bg-white/50 hover:text-red-600 active:scale-95"
             activeProps={{
               className:
-                "bg-gradient-to-br from-red-600 via-rose-600 to-orange-400 text-white shadow-[0_12px_34px_rgba(225,29,72,.34),inset_0_1px_0_rgba(255,255,255,.32)]",
+                "bg-gradient-to-br from-red-600 via-rose-600 to-orange-400 text-white shadow-[0_10px_28px_rgba(225,29,72,.28),inset_0_1px_0_rgba(255,255,255,.34)]",
             }}
           >
             <Icon className="h-5 w-5 shrink-0" />

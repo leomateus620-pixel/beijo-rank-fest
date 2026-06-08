@@ -1,13 +1,19 @@
 import { mkdir } from "node:fs/promises";
 import { chromium } from "playwright";
 
+const baseUrl = process.env.BASE_URL || "http://localhost:8080";
 const browser = await chromium.launch();
 const page = await browser.newPage({
   viewport: { width: 390, height: 844 },
   acceptDownloads: true,
   ignoreHTTPSErrors: true,
 });
-await page.goto("http://localhost:8080/perfil", { waitUntil: "networkidle" });
+await page.goto(`${baseUrl}/perfil`, { waitUntil: "networkidle" });
+await page
+  .getByRole("button", { name: /^Compartilhar$/i })
+  .first()
+  .click();
+await page.getByRole("dialog", { name: /Compartilhar ranking BeijoCheck/i }).waitFor();
 const button = page.getByRole("button", { name: /Baixar PNG/i }).first();
 await button.scrollIntoViewIfNeeded();
 const downloadPromise = page.waitForEvent("download", { timeout: 60000 });

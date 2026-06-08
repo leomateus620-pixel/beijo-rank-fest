@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Download,
   Instagram,
@@ -7,6 +7,7 @@ import {
   Music2,
   Share2,
   Sparkles,
+  X,
 } from "lucide-react";
 import { toBlob } from "html-to-image";
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,7 @@ type ShareProfileRankingPayload = {
   surface?: ShareSurface;
   compact?: boolean;
   className?: string;
+  triggerLabel?: string;
 };
 
 const defaultUser = users[0];
@@ -189,6 +191,45 @@ export function ExportProfileRankingCard({
   );
 }
 
+function SharePreviewCard({
+  user,
+  position,
+  region,
+  event,
+}: Required<Pick<ShareProfileRankingPayload, "user" | "position" | "region" | "event">>) {
+  return (
+    <div className="relative mx-auto aspect-[9/16] w-full max-w-[10rem] overflow-hidden rounded-[1.35rem] bg-gradient-to-br from-red-700 via-rose-600 to-orange-400 p-3 text-white shadow-[0_24px_70px_rgba(190,18,60,.28)]">
+      <div className="absolute -right-10 -top-10 h-28 w-28 rounded-full bg-white/20 blur-2xl" />
+      <div className="relative z-10 flex h-full flex-col">
+        <div className="flex items-center justify-between text-[10px] font-black">
+          <span>💋 BeijoCheck</span>
+          <span className="rounded-full bg-white/20 px-2 py-1">#{position}</span>
+        </div>
+        <img
+          src={user.avatar}
+          alt={user.name}
+          className="mt-3 h-24 w-full rounded-[1rem] object-cover ring-2 ring-white/40"
+        />
+        <div className="mt-3 text-lg font-black leading-none">
+          {user.name}, {user.age}
+        </div>
+        <div className="mt-1 text-[11px] font-bold text-white/80">
+          {user.city} · {region}
+        </div>
+        <div className="mt-auto grid gap-2">
+          <div className="rounded-2xl bg-white/16 p-2">
+            <div className="text-2xl font-black">{user.kisses}</div>
+            <div className="text-[9px] font-black uppercase text-white/70">BeijoChecks</div>
+          </div>
+          <div className="rounded-full bg-white px-2 py-1 text-center text-[10px] font-black text-red-600">
+            {event} · Confirmação mútua
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function ShareProfileRankingActions({
   user = defaultUser,
   position = user.rank,
@@ -197,12 +238,24 @@ export function ShareProfileRankingActions({
   surface = "story",
   compact = false,
   className,
+  triggerLabel,
 }: ShareProfileRankingPayload) {
   const exportRef = useRef<HTMLDivElement>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [lastMessage, setLastMessage] = useState("Pronto para gerar PNG premium 9:16.");
   const filename = `beijocheck-ranking-${slugify(user.name || String(user.id))}.png`;
   const shareText = `Estou em #${position} no ranking BeijoCheck de ${region} com ${user.kisses} BeijoChecks. Ranking por cidade, evento e região.`;
+  const label = triggerLabel || (compact ? "Compartilhar" : "Compartilhar ranking");
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsOpen(false);
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [isOpen]);
 
   async function generateBlob() {
     if (!exportRef.current) throw new Error("Card de exportação indisponível.");
@@ -221,9 +274,7 @@ export function ShareProfileRankingActions({
         style: { transform: "none" },
       });
       if (!blob) throw new Error("Não foi possível gerar o PNG.");
-      setLastMessage(
-        "PNG gerado com sucesso. Escolha Instagram, TikTok ou WhatsApp na tela de compartilhamento.",
-      );
+      setLastMessage("PNG gerado. Agora escolha o app ou baixe a imagem.");
       toast.success("PNG gerado com sucesso");
       return blob;
     } finally {
@@ -244,7 +295,7 @@ export function ShareProfileRankingActions({
               ? `Veja meu ranking no BeijoCheck: Top ${position} em ${region} com ${user.kisses} BeijoChecks.`
               : shareText,
         });
-        setLastMessage("Compartilhamento nativo aberto. Selecione Instagram, TikTok ou WhatsApp.");
+        setLastMessage("Folha nativa aberta. Selecione Instagram, TikTok ou WhatsApp.");
         return;
       }
       downloadBlob(blob, filename);
@@ -254,13 +305,9 @@ export function ShareProfileRankingActions({
           "_blank",
           "noopener,noreferrer",
         );
-        setLastMessage(
-          "Web Share API indisponível: PNG baixado e WhatsApp aberto com texto. Anexe a imagem manualmente.",
-        );
+        setLastMessage("PNG baixado e WhatsApp aberto. Anexe a imagem manualmente.");
       } else {
-        setLastMessage(
-          "Se o app não aparecer, baixe a imagem e publique manualmente no Instagram, TikTok ou WhatsApp.",
-        );
+        setLastMessage("PNG baixado. Publique manualmente no Instagram, TikTok ou WhatsApp.");
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : "Falha ao gerar compartilhamento.";
@@ -282,15 +329,11 @@ export function ShareProfileRankingActions({
   }
 
   return (
-    <div
-      className={cn(
-        "max-w-full rounded-[1.6rem] border border-white/70 bg-white/75 p-3 shadow-[0_18px_50px_rgba(159,18,57,.08)] backdrop-blur-xl",
-        className,
-      )}
-    >
+    <div className={cn("min-w-0", className)}>
       <div
-        className="pointer-events-none fixed -left-[120vw] top-0 z-[-1] opacity-100"
+        className="pointer-events-none fixed left-[-10000px] top-0 z-[-10] h-[1920px] w-[1080px] overflow-hidden opacity-100 [contain:layout_paint_size]"
         aria-hidden="true"
+        data-export-card="beijocheck-ranking"
       >
         <div ref={exportRef}>
           <ExportProfileRankingCard
@@ -302,58 +345,134 @@ export function ShareProfileRankingActions({
           />
         </div>
       </div>
-      {!compact && (
-        <div className="mb-3 flex items-center gap-2 px-1 text-sm font-black text-red-600">
-          <Sparkles className="h-4 w-4" /> Exportar perfil + ranking em PNG
+
+      <Button
+        type="button"
+        onClick={() => setIsOpen(true)}
+        className={cn(
+          "w-full rounded-full bg-gradient-lipstick font-black text-white shadow-[0_14px_34px_rgba(225,29,72,.2)] transition active:scale-[.98]",
+          compact ? "h-10 px-4 text-sm" : "h-12 px-5",
+        )}
+      >
+        <Share2 className="mr-2 h-4 w-4" /> {label}
+      </Button>
+
+      {isOpen && (
+        <div className="fixed inset-0 z-[80] flex items-end justify-center px-3 pb-[calc(.75rem+env(safe-area-inset-bottom))] pt-8 sm:items-center">
+          <button
+            type="button"
+            aria-label="Fechar compartilhamento"
+            className="absolute inset-0 bg-red-950/28 backdrop-blur-[6px]"
+            onClick={() => setIsOpen(false)}
+          />
+          <section
+            role="dialog"
+            aria-modal="true"
+            aria-label="Compartilhar ranking BeijoCheck"
+            className="relative max-h-[min(88vh,42rem)] w-full max-w-md overflow-y-auto rounded-[2rem] border border-white/65 bg-white/82 p-4 shadow-[0_30px_120px_rgba(127,29,29,.36),inset_0_1px_0_rgba(255,255,255,.8)] backdrop-blur-2xl animate-in fade-in slide-in-from-bottom-4 duration-200"
+          >
+            <div className="mx-auto mb-3 h-1.5 w-12 rounded-full bg-red-200 sm:hidden" />
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="inline-flex items-center gap-2 rounded-full bg-red-50 px-3 py-1 text-[11px] font-black uppercase tracking-[.16em] text-red-600">
+                  <Sparkles className="h-3.5 w-3.5" /> BeijoCard oficial
+                </p>
+                <h2 className="mt-3 text-2xl font-black leading-tight text-red-950">
+                  Compartilhar posição
+                </h2>
+                <p className="mt-1 text-sm font-semibold text-muted-foreground">
+                  Preview seguro. O PNG real é gerado fora da tela.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white/75 text-red-600 shadow-sm transition hover:bg-red-50"
+                aria-label="Fechar"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="mt-4 grid grid-cols-[7.75rem_1fr] gap-3 max-[370px]:grid-cols-1">
+              <SharePreviewCard user={user} position={position} region={region} event={event} />
+              <div className="grid content-center gap-2">
+                <ShareButton
+                  label="WhatsApp"
+                  icon={MessageCircle}
+                  onClick={() => shareNative("whatsapp")}
+                  disabled={isGenerating}
+                  className="bg-green-600 text-white hover:bg-green-700"
+                />
+                <ShareButton
+                  label="Instagram"
+                  icon={Instagram}
+                  onClick={() => shareNative("instagram")}
+                  disabled={isGenerating}
+                  className="bg-gradient-to-r from-fuchsia-600 to-orange-500 text-white"
+                />
+                <ShareButton
+                  label="TikTok"
+                  icon={Music2}
+                  onClick={() => shareNative("tiktok")}
+                  disabled={isGenerating}
+                  className="bg-zinc-950 text-white hover:bg-zinc-800"
+                />
+                <ShareButton
+                  label="Sistema"
+                  icon={Share2}
+                  onClick={() => shareNative("system")}
+                  disabled={isGenerating}
+                  className="bg-gradient-lipstick text-white"
+                />
+                <ShareButton
+                  label="Baixar PNG"
+                  icon={Download}
+                  onClick={download}
+                  disabled={isGenerating}
+                  className="border border-red-200 bg-white text-red-600 hover:bg-red-50"
+                />
+              </div>
+            </div>
+
+            <p className="mt-4 rounded-2xl bg-red-50/80 p-3 text-xs font-semibold leading-relaxed text-red-900/75">
+              {isGenerating && <Loader2 className="mr-1 inline h-3.5 w-3.5 animate-spin" />}
+              {lastMessage} Instagram e TikTok usam a folha nativa do celular. Se não aparecer,
+              baixe o PNG e publique manualmente.
+            </p>
+          </section>
         </div>
       )}
-      <div className="grid min-w-0 grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
-        <Button
-          onClick={() => shareNative("whatsapp")}
-          disabled={isGenerating}
-          className="min-w-0 rounded-full bg-green-600 px-3 font-black text-white hover:bg-green-700"
-        >
-          {isGenerating ? (
-            <Loader2 className="mr-1 h-4 w-4 animate-spin" />
-          ) : (
-            <MessageCircle className="mr-1 h-4 w-4" />
-          )}{" "}
-          WhatsApp
-        </Button>
-        <Button
-          onClick={() => shareNative("instagram")}
-          disabled={isGenerating}
-          className="min-w-0 rounded-full bg-gradient-to-r from-fuchsia-600 to-orange-500 px-3 font-black text-white"
-        >
-          <Instagram className="mr-1 h-4 w-4" /> Instagram
-        </Button>
-        <Button
-          onClick={() => shareNative("tiktok")}
-          disabled={isGenerating}
-          className="min-w-0 rounded-full bg-zinc-950 px-3 font-black text-white hover:bg-zinc-800"
-        >
-          <Music2 className="mr-1 h-4 w-4" /> TikTok
-        </Button>
-        <Button
-          onClick={() => shareNative("system")}
-          disabled={isGenerating}
-          className="min-w-0 rounded-full bg-gradient-lipstick px-3 font-black text-white"
-        >
-          <Share2 className="mr-1 h-4 w-4" /> Sistema
-        </Button>
-        <Button
-          onClick={download}
-          disabled={isGenerating}
-          variant="outline"
-          className="col-span-2 min-w-0 rounded-full border-red-200 bg-white px-3 font-black text-red-600 sm:col-span-1"
-        >
-          <Download className="mr-1 h-4 w-4" /> Baixar PNG
-        </Button>
-      </div>
-      <p className="mt-3 px-1 text-xs font-semibold leading-relaxed text-muted-foreground">
-        {lastMessage} Instagram e TikTok na web não aceitam upload direto automático; use a folha
-        nativa ou baixe o PNG.
-      </p>
     </div>
+  );
+}
+
+function ShareButton({
+  label,
+  icon: Icon,
+  onClick,
+  disabled,
+  className,
+}: {
+  label: string;
+  icon: typeof Share2;
+  onClick: () => void;
+  disabled: boolean;
+  className?: string;
+}) {
+  return (
+    <Button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      className={cn("h-11 justify-start rounded-2xl px-4 font-black", className)}
+    >
+      {disabled ? (
+        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+      ) : (
+        <Icon className="mr-2 h-4 w-4" />
+      )}
+      {label}
+    </Button>
   );
 }
